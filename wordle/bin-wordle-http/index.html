@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Wordle Analyzer</title>
+  <script>
+    async function analyze() {
+        const result = document.getElementById('result');
+
+        let guesses = document.getElementById('guesses').value;
+        guesses = guesses.trim().replace(/ /g, ',');
+
+        // Analyze whenever a new five letter guess is fully typed
+        let last_guess = guesses.split(',').pop();
+        if (last_guess.length === 5) {
+            let response = await fetch(`/assess?g=${encodeURIComponent(guesses)}`);
+            result.innerHTML = await response.text();
+        }
+    }
+
+    window.onload = async function() {
+        // Use guesses from URL, if provided
+        const urlParams = new URLSearchParams(window.location.search);
+        let guesses = urlParams.get('g');
+        if (guesses) {
+            guesses = guesses.replace(/,/g, ' ');
+            document.getElementById('guesses').value = guesses;
+        }
+
+        // Show current analysis
+        await analyze();
+
+        // Update analysis as additional guesses are types
+        const textbox = document.getElementById('guesses');
+        textbox.addEventListener('input', analyze);
+
+        // Focus the textbox (cursor at end of value)
+        const length = textbox.value.length;
+        textbox.setSelectionRange(length, length);
+        textbox.focus();
+    }
+  </script>
+  <style>
+    * {
+        font-family: monospace;
+    }
+
+    body {
+        color: #d7dadc;
+        background-color: #121213;
+        display: flex;
+        flex-direction: column;
+    }
+
+    #guesses {
+        font-size: 150%;
+        padding: 4px;
+    }
+
+    #result {
+        margin-top: 12px;
+        padding: 4px;
+
+        white-space: pre;
+    }
+  </style>
+</head>
+
+<body>
+    <input id="guesses" type="text" value="clint soare dumpy " tabindex="1" />
+    <div id="result">
+
+    </div>
+</body>

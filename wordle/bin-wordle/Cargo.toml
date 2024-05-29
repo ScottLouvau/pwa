@@ -1,0 +1,17 @@
+[package]
+name = "wordle"
+version = "0.1.0"
+edition = "2021"
+include = ["../data/"]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+lib-wordle = { path = "../lib-wordle" }
+
+[profile.release]
+debug = true          # Include debug symbols to map to source code when profiling
+#strip = true          # Strip all debug symbols for smaller executable size
+#lto = true            # Link-Time Optimization: Removes unused code and reduces exe size, but severely slows build
+
+# RUSTFLAGS='-C force-frame-pointers=y' cargo build --release

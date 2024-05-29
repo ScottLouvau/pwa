@@ -1,0 +1,4 @@
+bin-wordle-wasm/data/
+target/
+
+Cargo.lock

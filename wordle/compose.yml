@@ -1,0 +1,19 @@
+version: "3"
+
+services:
+  wordle-http:
+    container_name: wordle-http
+    build: .
+    ports:
+      - "8888:8080/tcp"
+    restart: on-failure:10
+    read_only: true
+    cap_drop: 
+      - ALL
+    security_opt:
+      - "no-new-privileges:true"
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 50M

@@ -1,0 +1,10 @@
+#!/bin/bash
+
+wasm-pack build --target web
+
+mkdir -p data
+cp ../data/v12.txt ./data/
+cp ../data/2315/valid.txt ./data/valid.txt
+cp ../data/2315/answers.txt ./data/answers.txt
+
+echo Run: npx serve

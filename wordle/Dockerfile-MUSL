@@ -1,0 +1,60 @@
+ARG PROD_IMAGE=scratch
+ARG TARGET=aarch64-unknown-linux-musl
+# aarch64-unknown-linux-musl     [MUSL for Apple M1]
+# x86_64-unknown-linux-musl      [MUSL x64]
+
+# Build Rust toolchain image
+FROM rust:latest as build-base
+ARG TARGET
+RUN rustup target add ${TARGET}
+RUN apt update && apt install -y musl-tools musl-dev
+RUN update-ca-certificates
+
+# Add non-root user to copy to scratch image (we can't create users there)
+RUN useradd -u 10001 nonroot
+
+# Build wordle-http
+FROM build-base as builder
+ARG TARGET
+
+# ... copy empty main to pre-build and cache dependencies
+WORKDIR /usr/local/wordle
+
+COPY ./data ./data
+
+COPY lib-wordle/src ./lib-wordle/src
+COPY lib-wordle/Cargo.toml ./lib-wordle/
+COPY lib-wordle/Cargo.lock ./lib-wordle/
+
+COPY bin-wordle-http/Cargo.toml ./bin-wordle-http/
+COPY bin-wordle-http/Cargo.lock ./bin-wordle-http/
+COPY stub-main.rs ./bin-wordle-http/src/main.rs
+
+WORKDIR /usr/local/wordle/bin-wordle-http
+RUN cargo build --release --target ${TARGET}
+
+# ... copy real code and (incremental) build
+RUN rm -f ./src/main.rs
+
+COPY bin-wordle-http/index.html ./
+COPY bin-wordle-http/src/ ./src/
+
+RUN touch ./src/main.rs
+RUN cargo build --release --target ${TARGET}
+
+# Build production image to run app.
+FROM ${PROD_IMAGE}
+ARG TARGET
+
+WORKDIR /app
+COPY ./data ./data/
+COPY --from=builder --chown=base:nonroot /usr/local/wordle/bin-wordle-http/target/${TARGET}/release/wordle-http ./
+
+COPY --from=build-base /etc/passwd /etc/passwd
+USER nonroot
+
+EXPOSE 8080
+CMD ["./wordle-http"]
+
+# docker build -f Dockerfile-MUSL -t wordle-http-musl:latest .
+# docker run --name wordle-http -d -p 8888:8080 wordle-http-musl:latest 

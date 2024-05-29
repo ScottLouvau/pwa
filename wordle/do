@@ -1,0 +1,94 @@
+#!/bin/bash
+
+# Rebuild and Run Container
+if [[ "$1" == "up" ]]; then
+    docker compose up --build -d
+fi
+
+if [[ "$1" == "build" ]] || [[ "$1" == "b" ]]; then
+    docker build -t scottlouvau/wordle-http .
+fi
+
+if [[ "$1" == "code-coverage" ]] || [[ "$1" == "ccov" ]]; then
+    # Run Unit Tests, emit Code Coverage.
+    # See highlighted code with 'Coverage Gutters' VSCode extension and 'Coverage Gutters: Show Coverage' command.
+    cargo llvm-cov --lcov --output-path lcov.info
+fi
+
+if [[ "$1" == "build-musl" ]]; then
+    docker build -f Dockerfile-MUSL -t wordle-http-musl:latest .
+    # docker run --name wordle-http -d -p 8888:8080 wordle-http-musl:latest 
+fi
+
+if [[ "$1" == "run" ]] || [[ "$1" == "r" ]]; then
+    docker run --name wordle-http --cap-drop all --security-opt=no-new-privileges --read-only -d -p 8888:8080 scottlouvau/wordle-http
+fi
+
+if [[ "$1" == "run-shell" ]] || [[ "$1" == "rs" ]]; then
+    docker run --name wordle-http --entrypoint=sh -it --rm -p 8888:8080 scottlouvau/wordle-http
+fi
+
+if [[ "$1" == "stop" ]] || [[ "$1" == "s" ]]; then
+    # Stop waits for graceful exit, but http server stays up due to browser connection left open for future requests
+    #docker stop wordle-http
+    docker rm -f wordle-http
+fi
+
+if [[ "$1" == "test" ]] || [[ "$1" == "t" ]]; then
+    open "http://localhost:8888/assess?g=parse,clint,noise"
+fi
+
+if [[ "$1" == "load-test" ]] || [[ "$1" == "lt" ]]; then
+    # 100 connections, 10 seconds.
+    # brew install wrk
+    wrk -c 100 -d 10 "http://localhost:8888/assess?g=parse,clint,dumpy"
+fi
+
+if [[ "$1" == "run-profile" ]] || [[ "$1" == "rp" ]]; then
+    # Ask to build the builder stage only (with cargo, flamegraph, and perf tools)
+    docker build --target builder -t scottlouvau/wordle-builder .
+
+    # Run the command to profile under the profiler
+    #docker run --name wordle-profile -ti scottlouvau/wordle-builder cargo flamegraph --release --bin wordle-v2 -- simulate 500000 ./data/v11.txt
+    docker run --name wordle-profile -ti scottlouvau/wordle-builder cargo flamegraph --release --bin wordle-v2 -- assess soare clint mawky poker joker
+    
+    # Copy the profiling data out to the host
+    docker cp wordle-profile:/usr/local/src/perf.data .
+    docker cp wordle-profile:/usr/local/src/flamegraph.svg .
+    docker rm -f wordle-profile
+
+    # Show results in the browser
+    open -a "Microsoft Edge" flamegraph.svg
+fi
+
+if [[ "$1" == "profile-source" ]] || [[ "$1" == "ps" ]]; then
+    docker rm -f wordle-profile
+
+    # Ask to build the builder stage only (with cargo, flamegraph, and perf tools)
+    docker build --target builder -t scottlouvau/wordle-builder .
+
+    docker run --name wordle-profile -ti scottlouvau/wordle-builder /bin/sh
+
+    # Run the command to profile under the profiler
+    #docker exec --name wordle-profile perf record -g /usr/local/src/target/release/wordle-v2 assess soare clint mawky poker joker
+    #docker cp wordle-profile:/usr/local/src/perf.data .
+
+    #docker start -ai wordle-profile --entrypoint=sh -it --rm -p 8888:8080 scottlouvau/wordle-builder
+    #docker run --name wordle-profile -ti scottlouvau/wordle-builder perf report
+
+    # perf annotate -M intel --skip-missing --stdio -i perf.data | less
+fi
+
+
+
+# docker run
+#  --name        | Name container
+
+#  -d            | Disconnect Console
+#  -p 8888:8080  | Map port 8080 inside to 8888 outside
+
+#  --rm          | Remove container when stopped
+#  -i            | Keep stdin attached to container to type input to it 
+#  -t            | Allocate a pseudo TTY
+
+#  --restart     | Set a restart policy

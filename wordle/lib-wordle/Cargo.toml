@@ -1,0 +1,16 @@
+[package]
+name = "lib-wordle"
+version = "0.1.0"
+edition = "2021"
+include = ["../data/"]
+
+[dependencies]
+assert_float_eq = "1.1.3"
+num-format = "0.4.4"
+getrandom = "0.2.15"
+rand = "0.8.5"
+
+[profile.release]
+debug = true          # Include debug symbols to map to source code when profiling
+#strip = true          # Strip all debug symbols for smaller executable size
+#lto = true            # Link-Time Optimization: Removes unused code and reduces exe size, but severely slows build

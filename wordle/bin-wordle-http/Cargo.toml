@@ -1,0 +1,26 @@
+[package]
+name = "wordle-http"
+version = "0.1.0"
+edition = "2021"
+include = ["../data/"]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+lib-wordle = { path = "../lib-wordle" }
+
+# Http Server
+form_urlencoded = "1.2.0"
+hyper = { version = "0.14.27", features = ["http1", "http2", "server", "tcp"] }
+once_cell = "1.18.0"
+tokio = { version = "1.33.0", features = ["signal", "sync", "macros", "rt-multi-thread"] }
+
+# Alternative Dev Http Server
+# may_minihttp = { git = "https://github.com/Xudong-Huang/may_minihttp.git" }
+
+[profile.release]
+debug = true          # Include debug symbols to map to source code when profiling
+#strip = true          # Strip all debug symbols for smaller executable size
+#lto = true            # Link-Time Optimization: Removes unused code and reduces exe size, but severely slows build
+
+# RUSTFLAGS='-C force-frame-pointers=y' cargo build --release

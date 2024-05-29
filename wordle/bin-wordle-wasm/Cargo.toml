@@ -1,0 +1,19 @@
+[package]
+name = "wordle-wasm"
+version = "0.1.0"
+license = "MIT"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+getrandom = { version = "0.2.15", features = ["js"] }
+lib-wordle = { path = "../lib-wordle" }
+wasm-bindgen = "0.2"
+
+[profile.release]
+strip = true
+opt-level = "z"
+codegen-units = 1
+lto = true
