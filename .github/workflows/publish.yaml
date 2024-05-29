@@ -15,13 +15,11 @@ concurrency:
   group: "pages"
   cancel-in-progress: false
 
-# Default to bash
 defaults:
   run:
     shell: bash
 
 jobs:
-  # Build job
   build:
     runs-on: ubuntu-latest
     steps:
@@ -48,7 +46,6 @@ jobs:
         with:
           path: ./publish
 
-  # Deployment job
   deploy:
     environment:
       name: github-pages
