@@ -1,5 +1,6 @@
 #!/bin/bash
-DEST=~/Code/blog/static/wordle-analyze
+DEST=../../publish/wordle-analyze
+rm -rf "$DEST"
 
 wasm-pack build --target web
 
@@ -12,9 +13,4 @@ mkdir -p $DEST/pkg
 cp "pkg/wordle_wasm_bg.wasm" "$DEST/pkg/wordle_wasm_bg.wasm"
 cp "pkg/wordle_wasm.js" "$DEST/pkg/wordle_wasm.js"
 
-cp app.webmanifest "$DEST/app.webmanifest"
-cp index.html "$DEST/index.html"
-cp service-worker.js "$DEST/service-worker.js"
-cp wordle-analyze-a.png "$DEST/wordle-analyze-a.png"
-
-echo Run: sd blog deploy
+cp -r "web/"* "$DEST"
