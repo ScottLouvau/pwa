@@ -1,5 +1,4 @@
-# Sample workflow for building and deploying a Hugo site to GitHub Pages
-name: Deploy Hugo site to Pages
+name: Build Rust WASM PWA and Deploy to GitHub Pages
 
 on:
   push:
@@ -31,7 +30,6 @@ jobs:
       - name: Install Rust
         run: |
           rustup update --no-self-update stable
-          rustup component add --toolchain stable
           rustup default stable
           rustup target add wasm32-unknown-unknown
       - name: Install Rust-Wasm
