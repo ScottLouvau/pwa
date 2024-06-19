@@ -38,9 +38,9 @@ jobs:
         run: |
           cargo test
       - name: Build and Publish
-        working-directory: ./wordle/bin-wordle-wasm
+        working-directory: .
         run: |
-          ./publish 
+          ./publish-all
       - name: Upload Outputs
         uses: actions/upload-pages-artifact@v3
         with:

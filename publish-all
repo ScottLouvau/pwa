@@ -1,0 +1,9 @@
+#!/bin/bash
+
+cd ./wordle/bin-wordle-wasm
+./publish
+cd ../..
+
+cd ./wordle/v1
+./publish
+cd ../..
