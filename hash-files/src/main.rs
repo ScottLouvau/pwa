@@ -27,9 +27,15 @@ fn main() {
 }
 
 fn hash_files_recursively(path: &PathBuf, except_path: &PathBuf, hasher: &mut Sha256) -> io::Result<()> {
-    let paths = std::fs::read_dir(path)?;
+    // Walk paths in sorted order
+    let mut paths: Vec<PathBuf> = std::fs::read_dir(path)?
+        .map(|e| e.unwrap())
+        .map(|e| e.path())
+        .collect();
+        
+    paths.sort();
+
     for path in paths {
-        let path = path?.path();
         if path.is_dir() {
             hash_files_recursively(&path, except_path, hasher)?;
         } else {
