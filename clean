@@ -1,0 +1,7 @@
+#!/bin/bash
+
+rm -rf ./publish
+rm -rf ./wordle/bin-wordle/target
+rm -rf ./wordle/bin-wordle-http/target
+rm -rf ./wordle/bin-wordle-wasm/target
+rm -rf ./wordle/lib-wordle/target
