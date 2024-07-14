@@ -1,7 +1,7 @@
-const dictionary = ['earth', 'plane', 'crane', 'audio', 'house', 'clint', 'soare', 'dumpy'];
+let dictionary = ['earth', 'plane', 'crane', 'audio', 'house', 'clint', 'soare', 'dumpy'];
 
 const state = {
-    secret: dictionary[Math.floor(Math.random() * dictionary.length)],
+    secret: null,
     grid: Array(6)
         .fill()
         .map(() => Array(5).fill('')),
@@ -16,7 +16,6 @@ function updateGrid() {
             box.textContent = state.grid[i][j];
         }
     }
-
 }
 
 function drawBox(container, row, col, letter) {
@@ -125,11 +124,20 @@ function removeLetter() {
     state.currentCol--;
 }
 
-function startup() {
+async function startup() {
+    const valid = await fetch('./valid.txt').then((res) => res.text()).then((res) => res.split('\n'));
+    const answers = await fetch('./answers.txt').then((res) => res.text()).then((res) => res.split('\n'));
+    dictionary = [];
+    dictionary.push(...valid);
+    dictionary.push(...answers);
+
+    state.secret = answers[Math.floor(Math.random() * answers.length)];
+
     const game = document.getElementById('game');
     drawGrid(game);
 
     registerKeyboardEvents();
+    console.log(state.secret);
 }
 
 startup();
