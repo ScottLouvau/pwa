@@ -131,7 +131,15 @@ async function startup() {
     dictionary.push(...valid);
     dictionary.push(...answers);
 
-    state.secret = answers[Math.floor(Math.random() * answers.length)];
+    // no-cors definitely does not do the right thing; it blocks everything.
+    
+    const isTest = true;
+    const today = new Date().toLocaleDateString("sv");
+    const response = await fetch(`./${today}.json`);
+    const answer = response.json();
+
+    state.secret = answer.word;
+    //state.secret = answers[Math.floor(Math.random() * answers.length)];
 
     const game = document.getElementById('game');
     drawGrid(game);
