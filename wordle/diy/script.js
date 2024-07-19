@@ -1,7 +1,7 @@
 const dictionary = [];
 let answer = null;
 
-const date = todayString();
+const today = todayString();
 let guesses = [""];
 
 const ANSWER_COUNT = 2315;
@@ -10,22 +10,17 @@ const GUESS_LIMIT = 6;
 
 const FLIP_ANIMATION_DURATION = 500;
 const DANCE_ANIMATION_DURATION = 500;
-const ANSWER_LINK_BASE_URL = "https://scottlouvau.github.io/pwa/wordle-analyze/?g="
 
 const gameMode = document.getElementById("game-mode");
 const keyboard = document.querySelector("[data-keyboard]");
 const alertContainer = document.querySelector("[data-alert-container]");
 const guessGrid = document.querySelector("[data-guess-grid]");
-const analyzeLink = document.getElementById("analyze-link");
 const Response = { "Green": "green", "Yellow": "yellow", "Black": "black" };
 
 // TODO:
 //  - Consolidate animation methods
 //  - Track statistics and show after game
-//  - Link to analyze app after game complete
 //  - Wrap as offline-friendly PWA 
-//  - ? Separate data model (instead of inside DOM)
-  // Guess array only? Guesses and responses? and keyboard?
 
 startup();
 
@@ -40,10 +35,10 @@ async function startup() {
 
 async function chooseAnswer() {
   const mode = gameMode.value;
+  gameMode.blur();
 
   if (mode === "Global") {
     // Global: Fetch current answer
-    const today = new Date().toLocaleDateString("sv");
     const official = await fetch(`https://scottlouvau.github.io/fetch/data/wordle/${today}.json`).then((res) => res.json());
     answer = official.solution;
   } else if (mode === "V1") {
@@ -59,12 +54,12 @@ async function chooseAnswer() {
   if (mode === "Random") {
     guesses = [""];
   } else {
-    guesses = JSON.parse(localStorage.getItem(`${date}-${mode}-guesses`)) || [""];
+    let state = JSON.parse(localStorage.getItem(`${mode}-state`));
+    guesses = (state?.date === today) ? state.guesses : [""];
   }
 
   syncInterface();
-  gameMode.blur();
-  startInteraction()
+  startInteraction();  
 }
 
 // Test: getResponse("papal", "apple") == [ "yellow", "yellow", "green", "black", "yellow" ]
@@ -101,8 +96,6 @@ function getResponse(guess, answer) {
 function syncInterface() {
   let responses = guesses.map((guess, index) => getResponse(guess, answer));
   let tiles = guessGrid.querySelectorAll(".tile");
-
-  analyzeLink.href = ANSWER_LINK_BASE_URL + guesses.join(",").trimEnd(",");
 
   // Clear tiles
   for (tile of tiles) {
@@ -151,6 +144,13 @@ function syncInterface() {
   }
 }
 
+function analyze() {
+  let url = "https://scottlouvau.github.io/pwa/wordle-analyze/?g=" + guesses.join(",").replace(/,*$/, "");
+  if (!url.endsWith(answer)) { url += "," + answer; }
+
+  window.open(url, "_blank");
+}
+
 function todayString() {
   return new Date().toLocaleDateString("sv");
 }
@@ -163,13 +163,11 @@ function daysSinceLaunch() {
 function startInteraction() {
   document.addEventListener("click", handleMouseClick);
   document.addEventListener("keydown", handleKeyPress);
-  gameMode.addEventListener("change", chooseAnswer);
 }
 
 function stopInteraction() {
   document.removeEventListener("click", handleMouseClick);
   document.removeEventListener("keydown", handleKeyPress);
-  gameMode.removeEventListener("change", chooseAnswer);
 }
 
 function handleMouseClick(e) {
@@ -225,7 +223,7 @@ function deleteKey() {
   delete lastTile.dataset.state;
   delete lastTile.dataset.letter;
 
-  guesses[guesses.length - 1].slice(0, -1);
+  guesses[guesses.length - 1] = guesses[guesses.length - 1].slice(0, -1) || "";
 }
 
 function submitGuess() {
@@ -247,7 +245,7 @@ function submitGuess() {
   }
 
   guesses.push("");
-  localStorage.setItem(`${date}-${gameMode.value}-guesses`, JSON.stringify(guesses));
+  localStorage.setItem(`${gameMode.value}-state`, JSON.stringify({ date: today, guesses: guesses }));
 
   stopInteraction();
   const response = getResponse(guess, answer);
@@ -320,13 +318,11 @@ function checkWinLose(guess, tiles) {
     showAlert("You Win", 5000);
     danceTiles(tiles);
     stopInteraction();
-    analyzeLink.href = ANSWER_LINK_BASE_URL + guesses.join(",");
     return;
   }
 
   if (guesses.length > GUESS_LIMIT) {
     showAlert(answer.toUpperCase(), null);
-    analyzeLink.href = ANSWER_LINK_BASE_URL + guesses.join(",") + "," + answer;
     stopInteraction();
   }
 }

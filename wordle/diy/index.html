@@ -14,9 +14,9 @@
   <div class="header">
     <div class="title">WORDLE</div>
     <div>
-      <a id="analyze-link" href="https://scottlouvau.github.io/pwa/wordle-analyze/" target="_blank" class="button">Analyze</a>
+      <button onclick="analyze()" title="Analyze">A</button>
     </div>
-    <select id="game-mode">
+    <select id="game-mode" onchange="chooseAnswer()">
       <option value="Global">Global</option>
       <option value="V1" selected>V1</option>
       <option value="Random">Random</option>
