@@ -13,6 +13,23 @@ body {
   font-size: clamp(.5rem, 2.5vmin, 1.5rem);
 }
 
+.title {
+  position: absolute;
+  left: 0;
+  right: 0;
+  text-align: center;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1em;
+  border-bottom: 1px solid hsl(240, 2%, 23%);
+  font-size: 150%;
+  min-height: 1.2em;
+}
+
 .keyboard {
   display: grid;
   grid-template-columns: repeat(20, minmax(auto, 1.25em));

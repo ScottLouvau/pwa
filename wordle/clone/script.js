@@ -1,11 +1,14 @@
 const dictionary = [];
-let targetWord = null;
+let answer = null;
 
 const ANSWER_COUNT = 2315;
 const WORD_LENGTH = 5;
+const GUESS_LIMIT = 6;
 
 const FLIP_ANIMATION_DURATION = 500;
 const DANCE_ANIMATION_DURATION = 500;
+
+const gameMode = document.getElementById("game-mode");
 const keyboard = document.querySelector("[data-keyboard]");
 const alertContainer = document.querySelector("[data-alert-container]");
 const guessGrid = document.querySelector("[data-guess-grid]");
@@ -14,7 +17,6 @@ const guessGrid = document.querySelector("[data-guess-grid]");
 //  - Consolidate animation methods
 //  - Remember today's guesses; show in-progress game on reload during same day.
 //  - Track statistics and show after game
-//  - Add title bar with stats button, game type toggle
 //  - Link to analyze app after game complete
 //  - Wrap as offline-friendly PWA 
 //  - ? Separate data model (instead of inside DOM)
@@ -24,17 +26,42 @@ startup();
 async function startup() {
   // Retrieve all words (answers are first, then other valid words)
   const words = await fetch('./data/words.txt').then((res) => res.text()).then((res) => res.split('\n'));
-
-  // Track all valid words (to validate guesses)
   dictionary.push(...words);
 
-  // V1: Choose an answer (from the answer prefix of the word list, moving down one answer each day)
-  targetWord = words[daysSinceLaunch() % ANSWER_COUNT];
+  // Choose an answer and start the game
+  await chooseAnswer();
+}
 
-  // Global: Fetch current answer
-  const today = new Date().toLocaleDateString("sv");
-  const official = await fetch(`./data/${today}.json`).then((res) => res.json());
-  targetWord = official.solution;
+async function chooseAnswer() {
+  const mode = gameMode.value;
+
+  if (mode === "Global") {
+    // Global: Fetch current answer
+    const today = new Date().toLocaleDateString("sv");
+    const official = await fetch(`https://scottlouvau.github.io/fetch/data/wordle/${today}.json`).then((res) => res.json());
+    answer = official.solution;
+  } else if (mode === "V1") {
+    // V1: Choose an answer (from the answer prefix of the word list, moving down one answer each day)
+    answer = dictionary[daysSinceLaunch() % ANSWER_COUNT];
+  } else if (mode === "Random") {
+    answer = dictionary[Math.floor(Math.random() * dictionary.length)];
+  } else {
+    showAlert("Error: Unknown Game Mode");
+  }
+
+  // Clear board
+  guessGrid.innerHTML = "";
+  for (let i = 0; i < WORD_LENGTH * GUESS_LIMIT; i++) {
+    const tile = document.createElement("div");
+    tile.classList.add("tile");
+    guessGrid.appendChild(tile);
+  }
+
+  // Clear keyboard colors
+  keyboard.querySelectorAll("[data-key]").forEach(key => {
+    key.classList.remove("correct", "wrong", "wrong-location");
+  });
+
 
   startInteraction()
 }
@@ -47,11 +74,13 @@ function daysSinceLaunch() {
 function startInteraction() {
   document.addEventListener("click", handleMouseClick);
   document.addEventListener("keydown", handleKeyPress);
+  gameMode.addEventListener("change", chooseAnswer);
 }
 
 function stopInteraction() {
   document.removeEventListener("click", handleMouseClick);
   document.removeEventListener("keydown", handleKeyPress);
+  gameMode.removeEventListener("change", chooseAnswer);
 }
 
 function handleMouseClick(e) {
@@ -139,10 +168,10 @@ function flipTile(tile, index, array, guess) {
     "transitionend",
     () => {
       tile.classList.remove("flip");
-      if (targetWord[index] === letter) {
+      if (answer[index] === letter) {
         tile.dataset.state = "correct";
         key.classList.add("correct");
-      } else if (targetWord.includes(letter)) {
+      } else if (answer.includes(letter)) {
         tile.dataset.state = "wrong-location";
         key.classList.add("wrong-location");
       } else {
@@ -198,7 +227,7 @@ function shakeTiles(tiles) {
 }
 
 function checkWinLose(guess, tiles) {
-  if (guess === targetWord) {
+  if (guess === answer) {
     showAlert("You Win", 5000);
     danceTiles(tiles);
     stopInteraction();
@@ -207,7 +236,7 @@ function checkWinLose(guess, tiles) {
 
   const remainingTiles = guessGrid.querySelectorAll(":not([data-letter])")
   if (remainingTiles.length === 0) {
-    showAlert(targetWord.toUpperCase(), null);
+    showAlert(answer.toUpperCase(), null);
     stopInteraction();
   }
 }
