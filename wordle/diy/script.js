@@ -17,13 +17,14 @@ const guessGrid = document.querySelector("[data-guess-grid]");
 const overlay = document.getElementById("overlay");
 const Response = { "Green": "green", "Yellow": "yellow", "Black": "black" };
 
-// TODO:
-//  - Track statistics and show after game
-//  - Wrap as offline-friendly PWA 
-
 startup();
 
 async function startup() {
+  // Notify the browser of the associated service worker
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./service-worker.js', { scope: './' });
+  }
+
   // Retrieve all words (answers are first, then other valid words)
   const words = await fetch('./data/words.txt').then((res) => res.text()).then((res) => res.split('\n'));
   dictionary.push(...words);
