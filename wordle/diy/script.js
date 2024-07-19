@@ -14,6 +14,7 @@ const gameMode = document.getElementById("game-mode");
 const keyboard = document.querySelector("[data-keyboard]");
 const alertContainer = document.querySelector("[data-alert-container]");
 const guessGrid = document.querySelector("[data-guess-grid]");
+const overlay = document.getElementById("overlay");
 const Response = { "Green": "green", "Yellow": "yellow", "Black": "black" };
 
 // TODO:
@@ -321,6 +322,56 @@ function checkWinLose(guess, tiles) {
   localStorage.setItem("record", JSON.stringify(record));
 
   stopInteraction();
+}
+
+function showStatistics() {
+  const statistics = document.createElement("div");
+  statistics.id = "statistics";
+  statistics.classList.add("statistics");
+
+  const label = document.createElement("div");
+  label.textContent = "Statistics";
+  label.classList.add("label");
+  statistics.appendChild(label);
+
+  const record = JSON.parse(localStorage.getItem("record")) || [0, 0, 0, 0, 0, 0, 0];
+  const maxGameCount = Math.max(1, record.reduce((a, b) => Math.max(a, b)));
+  
+  for (let i = 0; i < record.length; i++) {
+    const gameCount = record[i];
+    const percentage = Math.floor(100 * gameCount / maxGameCount);
+
+    const bar = document.createElement("div");
+    bar.classList.add("bar");
+    bar.style.width = `${percentage}%`;
+    bar.textContent = `${gameCount}`;
+    bar.dataset.count = gameCount;
+    
+    const turnCount = document.createElement("div");
+    turnCount.textContent = `${i + 1}`;    
+
+    const row = document.createElement("div");
+    row.classList.add("row");
+    row.appendChild(turnCount);
+    row.appendChild(bar);
+    statistics.appendChild(row);
+  }
+
+  const analyzeButton = document.createElement("button");
+  analyzeButton.textContent = "Analyze";
+  analyzeButton.addEventListener("click", analyze);
+  statistics.appendChild(analyzeButton);
+  
+  overlay.appendChild(statistics);
+  overlay.style.visibility = "visible";
+
+  overlay.addEventListener("click", closeOverlay);
+  statistics.addEventListener("click", (e) => e.stopPropagation());
+}
+
+function closeOverlay() {
+  overlay.innerHTML = "";
+  overlay.style.visibility = "hidden";
 }
 
 function animate(items, animationName, delayBetweenItemsMs) {
