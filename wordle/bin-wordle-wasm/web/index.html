@@ -96,9 +96,20 @@
       }
 
       load().then(() => {
-        analyze();
-
         const textbox = document.getElementById('guesses');
+
+        // Use guesses from URL, if provided
+        const urlParams = new URLSearchParams(window.location.search);
+        let guesses = urlParams.get('g');
+        if (guesses) {
+            guesses = guesses.replace(/,/g, ' ');
+            textbox.value = guesses;
+        }
+
+        // Analyze initial guesses
+        analyze();
+        
+        // Re-analyze on changes
         textbox.addEventListener('input', analyze);
       });
     </script>

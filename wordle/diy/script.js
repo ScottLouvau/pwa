@@ -10,11 +10,13 @@ const GUESS_LIMIT = 6;
 
 const FLIP_ANIMATION_DURATION = 500;
 const DANCE_ANIMATION_DURATION = 500;
+const ANSWER_LINK_BASE_URL = "https://scottlouvau.github.io/pwa/wordle-analyze/?g="
 
 const gameMode = document.getElementById("game-mode");
 const keyboard = document.querySelector("[data-keyboard]");
 const alertContainer = document.querySelector("[data-alert-container]");
 const guessGrid = document.querySelector("[data-guess-grid]");
+const analyzeLink = document.getElementById("analyze-link");
 const Response = { "Green": "green", "Yellow": "yellow", "Black": "black" };
 
 // TODO:
@@ -99,6 +101,8 @@ function getResponse(guess, answer) {
 function syncInterface() {
   let responses = guesses.map((guess, index) => getResponse(guess, answer));
   let tiles = guessGrid.querySelectorAll(".tile");
+
+  analyzeLink.href = ANSWER_LINK_BASE_URL + guesses.join(",").trimEnd(",");
 
   // Clear tiles
   for (tile of tiles) {
@@ -316,11 +320,13 @@ function checkWinLose(guess, tiles) {
     showAlert("You Win", 5000);
     danceTiles(tiles);
     stopInteraction();
+    analyzeLink.href = ANSWER_LINK_BASE_URL + guesses.join(",");
     return;
   }
 
   if (guesses.length > GUESS_LIMIT) {
     showAlert(answer.toUpperCase(), null);
+    analyzeLink.href = ANSWER_LINK_BASE_URL + guesses.join(",") + "," + answer;
     stopInteraction();
   }
 }
