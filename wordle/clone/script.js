@@ -1,6 +1,9 @@
 const dictionary = [];
 let answer = null;
 
+const date = todayString();
+let guesses = [""];
+
 const ANSWER_COUNT = 2315;
 const WORD_LENGTH = 5;
 const GUESS_LIMIT = 6;
@@ -12,14 +15,15 @@ const gameMode = document.getElementById("game-mode");
 const keyboard = document.querySelector("[data-keyboard]");
 const alertContainer = document.querySelector("[data-alert-container]");
 const guessGrid = document.querySelector("[data-guess-grid]");
+const Response = { "Green": "green", "Yellow": "yellow", "Black": "black" };
 
 // TODO:
 //  - Consolidate animation methods
-//  - Remember today's guesses; show in-progress game on reload during same day.
 //  - Track statistics and show after game
 //  - Link to analyze app after game complete
 //  - Wrap as offline-friendly PWA 
 //  - ? Separate data model (instead of inside DOM)
+  // Guess array only? Guesses and responses? and keyboard?
 
 startup();
 
@@ -44,26 +48,107 @@ async function chooseAnswer() {
     // V1: Choose an answer (from the answer prefix of the word list, moving down one answer each day)
     answer = dictionary[daysSinceLaunch() % ANSWER_COUNT];
   } else if (mode === "Random") {
-    answer = dictionary[Math.floor(Math.random() * dictionary.length)];
+    // Random: Choose a random word in the answer prefix of the word list
+    answer = dictionary[Math.floor(Math.random() * ANSWER_COUNT)];
   } else {
     showAlert("Error: Unknown Game Mode");
   }
 
-  // Clear board
-  guessGrid.innerHTML = "";
-  for (let i = 0; i < WORD_LENGTH * GUESS_LIMIT; i++) {
-    const tile = document.createElement("div");
-    tile.classList.add("tile");
-    guessGrid.appendChild(tile);
+  if (mode === "Random") {
+    guesses = [""];
+  } else {
+    guesses = JSON.parse(localStorage.getItem(`${date}-${mode}-guesses`)) || [""];
+  }
+
+  syncInterface();
+  gameMode.blur();
+  startInteraction()
+}
+
+// Test: getResponse("papal", "apple") == [ "yellow", "yellow", "green", "black", "yellow" ]
+//  P1 is yellow (matches unmatched P2 in apple)
+//  P3 is green  (matches, right position)
+//  A2 is yellow (uses up 'A' in answer)
+//  A4 is black  (no more unmatched 'A')
+//  L5 is black  (no 'L' in answer at all)
+function getResponse(guess, answer) {
+  if (guess.length < WORD_LENGTH) return null;
+
+  let unmatched = {};
+  for (let i = 0; i < guess.length; i++) {
+    if (guess[i] !== answer[i]) {
+      unmatched[answer[i]] = unmatched[answer[i]] + 1 || 1;
+    }
+  }
+
+  let result = [];
+  for (let i = 0; i < guess.length; i++) {
+    if (guess[i] === answer[i]) {
+      result.push(Response.Green);
+    } else if (unmatched[guess[i]] > 0) {
+      result.push(Response.Yellow);
+      unmatched[guess[i]]--;
+    } else {
+      result.push(Response.Black);
+    }
+  }
+  
+  return result;
+}
+
+function syncInterface() {
+  let responses = guesses.map((guess, index) => getResponse(guess, answer));
+  let tiles = guessGrid.querySelectorAll(".tile");
+
+  // Clear tiles
+  for (tile of tiles) {
+    tile.dataset.letter = "";
+    tile.dataset.state = "";
+    tile.classList.remove("green", "yellow", "black");
   }
 
   // Clear keyboard colors
   keyboard.querySelectorAll("[data-key]").forEach(key => {
-    key.classList.remove("correct", "wrong", "wrong-location");
+    key.classList.remove("green", "yellow", "black");
   });
+  
+  // Re-add guesses
+  for (let i = 0; i < GUESS_LIMIT; i++) {
+    let guess = guesses[i] || "";
+    let response = responses[i] || [];
 
+    for (let j = 0; j < WORD_LENGTH; j++) {
+      let letter = guess[j];
+      let color = response[j];
+      let tile = tiles[i * WORD_LENGTH + j];
 
-  startInteraction()
+      if (letter) {
+        tile.textContent = letter;
+        tile.dataset.letter = letter;
+      } else {
+        tile.textContent = "";
+        delete tile.dataset.letter;
+      }
+
+      if (color) {
+        tile.dataset.state = color;
+        tile.classList.add(color);
+
+        let key = keyboard.querySelector(`[data-key="${letter}"i]`);
+        key.classList.add(color);
+      } else {
+        if (letter) {
+          tile.dataset.state = "active";
+        } else {
+          delete tile.dataset.state;
+        }
+      }
+    }
+  }
+}
+
+function todayString() {
+  return new Date().toLocaleDateString("sv");
 }
 
 function daysSinceLaunch() {
@@ -124,6 +209,8 @@ function pressKey(key) {
   nextTile.dataset.letter = key.toLowerCase();
   nextTile.textContent = key;
   nextTile.dataset.state = "active";
+
+  guesses[guesses.length - 1] += key;
 }
 
 function deleteKey() {
@@ -133,6 +220,8 @@ function deleteKey() {
   lastTile.textContent = "";
   delete lastTile.dataset.state;
   delete lastTile.dataset.letter;
+
+  guesses[guesses.length - 1].slice(0, -1);
 }
 
 function submitGuess() {
@@ -147,17 +236,21 @@ function submitGuess() {
     return word + tile.dataset.letter;
   }, "");
 
-  if (!dictionary.includes(guess)) {
+  if (answer !== guess && !dictionary.includes(guess)) {
     showAlert("Not in word list");
     shakeTiles(activeTiles);
     return;
   }
 
+  guesses.push("");
+  localStorage.setItem(`${date}-${gameMode.value}-guesses`, JSON.stringify(guesses));
+
   stopInteraction();
-  activeTiles.forEach((...params) => flipTile(...params, guess));
+  const response = getResponse(guess, answer);
+  activeTiles.forEach((...params) => flipTile(...params, guess, response));
 }
 
-function flipTile(tile, index, array, guess) {
+function flipTile(tile, index, array, guess, response) {
   const letter = tile.dataset.letter;
   const key = keyboard.querySelector(`[data-key="${letter}"i]`);
   setTimeout(() => {
@@ -168,16 +261,8 @@ function flipTile(tile, index, array, guess) {
     "transitionend",
     () => {
       tile.classList.remove("flip");
-      if (answer[index] === letter) {
-        tile.dataset.state = "correct";
-        key.classList.add("correct");
-      } else if (answer.includes(letter)) {
-        tile.dataset.state = "wrong-location";
-        key.classList.add("wrong-location");
-      } else {
-        tile.dataset.state = "wrong";
-        key.classList.add("wrong");
-      }
+      tile.dataset.state = response[index];
+      key.classList.add(response[index]);      
 
       if (index === array.length - 1) {
         tile.addEventListener(
@@ -234,8 +319,7 @@ function checkWinLose(guess, tiles) {
     return;
   }
 
-  const remainingTiles = guessGrid.querySelectorAll(":not([data-letter])")
-  if (remainingTiles.length === 0) {
+  if (guesses.length > GUESS_LIMIT) {
     showAlert(answer.toUpperCase(), null);
     stopInteraction();
   }
