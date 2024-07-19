@@ -57,7 +57,6 @@ async function chooseAnswer() {
   }
 
   syncInterface();
-  startInteraction();  
 }
 
 // Test: getResponse("papal", "apple") == [ "yellow", "yellow", "green", "black", "yellow" ]
@@ -140,6 +139,10 @@ function syncInterface() {
       }
     }
   }
+
+  if (guesses.length <= GUESS_LIMIT && !guesses.includes(answer)) {
+    startInteraction();
+  }
 }
 
 function analyze() {
@@ -203,10 +206,12 @@ function handleKeyPress(e) {
 }
 
 function pressKey(key) {
+  key = key.toLowerCase();
+
   const activeTiles = getActiveTiles();
   if (activeTiles.length >= WORD_LENGTH) return;
   const nextTile = guessGrid.querySelector(":not([data-letter])");
-  nextTile.dataset.letter = key.toLowerCase();
+  nextTile.dataset.letter = key;
   nextTile.textContent = key;
   nextTile.dataset.state = "active";
 
@@ -302,14 +307,20 @@ function checkWinLose(guess, tiles) {
   if (guess === answer) {
     showAlert("You Win", 5000);
     animate(tiles, "dance", 60);
-    stopInteraction();
+  } else if (guesses.length > GUESS_LIMIT) {
+    showAlert(answer.toUpperCase(), null);
+  } else {
+    // Game still in progress...
     return;
   }
 
-  if (guesses.length > GUESS_LIMIT) {
-    showAlert(answer.toUpperCase(), null);
-    stopInteraction();
-  }
+  // Record the number of turns to solve (record[0] = 1 turn; record[6] is a loss)
+  // ...guesses has an extra string for the next partial guess, so two strings => one guess => record[0].  
+  let record = JSON.parse(localStorage.getItem("record")) || [0, 0, 0, 0, 0, 0, 0];
+  record[guesses.length - 2]++;
+  localStorage.setItem("record", JSON.stringify(record));
+
+  stopInteraction();
 }
 
 function animate(items, animationName, delayBetweenItemsMs) {
