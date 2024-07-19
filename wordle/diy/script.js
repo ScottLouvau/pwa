@@ -8,8 +8,7 @@ const ANSWER_COUNT = 2315;
 const WORD_LENGTH = 5;
 const GUESS_LIMIT = 6;
 
-const FLIP_ANIMATION_DURATION = 500;
-const DANCE_ANIMATION_DURATION = 500;
+const FLIP_ANIMATION_DURATION = 300;
 
 const gameMode = document.getElementById("game-mode");
 const keyboard = document.querySelector("[data-keyboard]");
@@ -18,7 +17,6 @@ const guessGrid = document.querySelector("[data-guess-grid]");
 const Response = { "Green": "green", "Yellow": "yellow", "Black": "black" };
 
 // TODO:
-//  - Consolidate animation methods
 //  - Track statistics and show after game
 //  - Wrap as offline-friendly PWA 
 
@@ -230,14 +228,11 @@ function submitGuess() {
   const activeTiles = [...getActiveTiles()];
   if (activeTiles.length !== WORD_LENGTH) {
     showAlert("Not enough letters");
-    shakeTiles(activeTiles);
+    animate(activeTiles, "shake", 0);
     return;
   }
 
-  const guess = activeTiles.reduce((word, tile) => {
-    return word + tile.dataset.letter;
-  }, "");
-
+  const guess = guesses[guesses.length - 1];
   if (answer !== guess && !dictionary.includes(guess)) {
     showAlert("Not in word list");
     shakeTiles(activeTiles);
@@ -245,7 +240,10 @@ function submitGuess() {
   }
 
   guesses.push("");
-  localStorage.setItem(`${gameMode.value}-state`, JSON.stringify({ date: today, guesses: guesses }));
+
+  if (gameMode.value !== "Random") {
+    localStorage.setItem(`${gameMode.value}-state`, JSON.stringify({ date: today, guesses: guesses }));
+  }
 
   stopInteraction();
   const response = getResponse(guess, answer);
@@ -300,23 +298,10 @@ function showAlert(message, duration = 1000) {
   }, duration);
 }
 
-function shakeTiles(tiles) {
-  tiles.forEach(tile => {
-    tile.classList.add("shake");
-    tile.addEventListener(
-      "animationend",
-      () => {
-        tile.classList.remove("shake");
-      },
-      { once: true }
-    );
-  });
-}
-
 function checkWinLose(guess, tiles) {
   if (guess === answer) {
     showAlert("You Win", 5000);
-    danceTiles(tiles);
+    animate(tiles, "dance", 60);
     stopInteraction();
     return;
   }
@@ -327,17 +312,17 @@ function checkWinLose(guess, tiles) {
   }
 }
 
-function danceTiles(tiles) {
-  tiles.forEach((tile, index) => {
+function animate(items, animationName, delayBetweenItemsMs) {
+  items.forEach((item, index) => {
     setTimeout(() => {
-      tile.classList.add("dance")
-      tile.addEventListener(
+      item.classList.add(animationName);
+      item.addEventListener(
         "animationend",
         () => {
-          tile.classList.remove("dance");
+          item.classList.remove(animationName);
         },
         { once: true }
       );
-    }, (index * DANCE_ANIMATION_DURATION) / 5);
+    }, index * delayBetweenItemsMs);
   });
 }
