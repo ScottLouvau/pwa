@@ -22,6 +22,10 @@ async function install() {
 }
 
 async function cacheFirst(request) {
+    if (request.url.includes("localhost")) {
+        return fetch(request);
+    }
+
     const cachedResponse = await caches.match(request);
     if (cachedResponse) { 
         return cachedResponse; 

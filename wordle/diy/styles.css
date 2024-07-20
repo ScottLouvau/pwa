@@ -2,7 +2,7 @@
   box-sizing: border-box;
   font-family: Arial;
   color: white;
-  background-color: hsl(240, 3%, 7%);;
+  background-color: hsl(240, 3%, 7%);
 }
 
 input {
@@ -29,6 +29,10 @@ body {
   margin: 0;
   padding: 0.5em;
   font-size: clamp(.5rem, 2.5vmin, 1.5rem);
+}
+
+.spacer {
+  flex-grow: 1;
 }
 
 .title {
@@ -60,6 +64,7 @@ body {
   grid-auto-rows: 3em;
   gap: .25em;
   justify-content: center;
+  padding-bottom: 0.25em;
 }
 
 .key {
@@ -117,11 +122,9 @@ body {
   display: grid;
   justify-content: center;
   align-content: center;
-  flex-grow: 1;
   grid-template-columns: repeat(5, 4em);
   grid-template-rows: repeat(6, 4em);
   gap: .25em;
-  margin-bottom: 1em;
 }
 
 .tile {
