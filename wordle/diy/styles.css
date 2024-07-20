@@ -1,6 +1,24 @@
 *, *::after, *::before {
   box-sizing: border-box;
   font-family: Arial;
+  color: white;
+  background-color: hsl(240, 3%, 7%);;
+}
+
+input {
+  border-radius: 0;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  border: 1px solid hsl(240, 2%, 23%);
+}
+
+button { 
+  border: 1px solid hsl(240, 2%, 23%);
+  border-radius: 0.25em;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
 }
 
 body {
@@ -9,26 +27,31 @@ body {
   flex-direction: column;
   min-height: 100vh;
   margin: 0;
-  padding: 1em;
+  padding: 0.5em;
   font-size: clamp(.5rem, 2.5vmin, 1.5rem);
 }
 
 .title {
-  font-size: 150%;
-  position: absolute;
-  left: 0;
-  right: 0;
   text-align: center;
-  z-index: -1;
 }
 
 .header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1em;
   border-bottom: 1px solid hsl(240, 2%, 23%);
-  min-height: 1.7em;
+  min-height: 1.2em;
+  font-size: 150%;
+  margin-bottom: 4px;
+}
+
+.header .side {
+  flex-grow: 1;
+  flex-basis: 0;
+  padding-bottom: 0.25em;
+}
+
+.right {
+  text-align: right;
 }
 
 .keyboard {
@@ -67,6 +90,7 @@ body {
 .key > svg {
   width: 1.75em;
   height: 1.75em;
+  background-color: transparent;
 }
 
 .key:hover, .key:focus {

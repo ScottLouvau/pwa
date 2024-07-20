@@ -17,6 +17,15 @@ const guessGrid = document.querySelector("[data-guess-grid]");
 const overlay = document.getElementById("overlay");
 const Response = { "Green": "green", "Yellow": "yellow", "Black": "black" };
 
+// iPad:
+//  - Keyboard too low on screen
+//  - Tapping on backspace icon doesn't work (only surrounding button)
+//  - Need to define title text color and button color, size, background.
+//  - Default to Global
+
+//  - Test caching behavior
+//  - Verify works offline (V1 mode)
+
 startup();
 
 async function startup() {
@@ -174,19 +183,24 @@ function stopInteraction() {
 }
 
 function handleMouseClick(e) {
-  if (e.target.matches("[data-key]")) {
-    pressKey(e.target.dataset.key);
-    return;
-  }
+  let target = e.target;
+  while (target) {
+    if (target.matches("[data-key]")) {
+      pressKey(target.dataset.key);
+      return;
+    }
 
-  if (e.target.matches("[data-enter]")) {
-    submitGuess();
-    return;
-  }
+    if (e.target.matches("[data-enter]")) {
+      submitGuess();
+      return;
+    }
 
-  if (e.target.matches("[data-delete]")) {
-    deleteKey();
-    return;
+    if (e.target.matches("[data-delete]")) {
+      deleteKey();
+      return;
+    }
+
+    target = target.parentElement;
   }
 }
 
