@@ -37,6 +37,7 @@ body {
 
 .title {
   text-align: center;
+  user-select: none;
 }
 
 .header {
@@ -58,13 +59,16 @@ body {
   text-align: right;
 }
 
+/* touch-action: manipulation to try to prevent double-tap zoom behavior */
+
 .keyboard {
   display: grid;
-  grid-template-columns: repeat(20, minmax(auto, 1.25em));
+  grid-template-columns: repeat(20, minmax(auto, 1.5em));
   grid-auto-rows: 3em;
   gap: .25em;
   justify-content: center;
   padding-bottom: 0.25em;
+  touch-action: manipulation;
 }
 
 .key {
@@ -86,6 +90,7 @@ body {
   border-radius: .25em;
   cursor: pointer;
   user-select: none;
+  touch-action: manipulation;
 }
 
 .key.large {

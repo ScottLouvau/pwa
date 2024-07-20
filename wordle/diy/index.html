@@ -20,12 +20,12 @@
   <div class="header">
     <div class="side">
     </div>
-    <div class="title">WORDLE</div>
+    <div class="title" onclick="deleteCaches()">WORDLE</div>
     <div class="side right">
       <button onclick="showStatistics()" title="Show Statistics">Stats</button>
       <select id="game-mode" onchange="chooseAnswer()">
-        <option value="Global">Global</option>
-        <option value="V1" selected>V1</option>
+        <option value="Global" selected>Global</option>
+        <option value="V1">V1</option>
         <option value="Random">Random</option>
       </select>
     </div>

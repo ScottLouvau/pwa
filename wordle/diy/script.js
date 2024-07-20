@@ -8,7 +8,7 @@ const ANSWER_COUNT = 2315;
 const WORD_LENGTH = 5;
 const GUESS_LIMIT = 6;
 
-const FLIP_ANIMATION_DURATION = 300;
+const FLIP_ANIMATION_DURATION = 500;
 
 const gameMode = document.getElementById("game-mode");
 const keyboard = document.querySelector("[data-keyboard]");
@@ -18,11 +18,6 @@ const overlay = document.getElementById("overlay");
 const Response = { "Green": "green", "Yellow": "yellow", "Black": "black" };
 
 // iPad:
-//  - Keyboard too low on screen
-//  - Tapping on backspace icon doesn't work (only surrounding button)
-//  - Need to define title text color and button color, size, background.
-//  - Default to Global
-
 //  - Test caching behavior
 //  - Verify works offline (V1 mode)
 
@@ -322,7 +317,8 @@ function showAlert(message, duration = 1000) {
 function checkWinLose(guess, tiles) {
   if (guess === answer) {
     showAlert("You Win", 5000);
-    animate(tiles, "dance", 60);
+    animate(tiles, "dance", 100);
+    setTimeout(showStatistics, 2000);
   } else if (guesses.length > GUESS_LIMIT) {
     showAlert(answer.toUpperCase(), null);
   } else {
@@ -402,4 +398,8 @@ function animate(items, animationName, delayBetweenItemsMs) {
       );
     }, index * delayBetweenItemsMs);
   });
+}
+
+function deleteCaches() {
+  navigator.serviceWorker.controller.postMessage("deleteCaches");
 }

@@ -17,3 +17,4 @@ cd ../..
 cd ./wordle/diy
 ./publish
 cd ../..
+./hash-files/target/release/hash-files ./publish/wordle-diy ./publish/wordle-diy/service-worker.js

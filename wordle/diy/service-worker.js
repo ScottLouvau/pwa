@@ -43,10 +43,24 @@ async function cacheFirst(request) {
     }
 }
 
+async function deleteCaches() {
+    // Delete all caches for this app
+    for (const name of await caches.keys()) {
+        await caches.delete(name);
+    }
+}
+
 self.addEventListener("install", (event) => {
     event.waitUntil(install());
 });
 
 self.addEventListener("fetch", (event) => {
     event.respondWith(cacheFirst(event.request));
+});
+
+self.addEventListener('message', async (event) => {
+    if (event.data === 'deleteCaches') {
+        console.log("Deleting Caches");
+        await deleteCaches();
+    }
 });
