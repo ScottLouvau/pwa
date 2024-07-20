@@ -4,8 +4,8 @@ const CACHE_PREFIX = "wordle-diy";
 const CACHE_NAME = `${CACHE_PREFIX}-${CACHE_VERSION}`;
 const CACHE_URLS = [
     "./",
-    "./app.webmanifest",
-    "./icon.svg",
+    "./pwa/app.webmanifest",
+    "./pwa/icon.svg",
 ];
 
 async function install() {
@@ -62,5 +62,7 @@ self.addEventListener('message', async (event) => {
     if (event.data === 'deleteCaches') {
         console.log("Deleting Caches");
         await deleteCaches();
+    } else if (event.data === 'getVersion') {
+        event.source.postMessage(CACHE_VERSION);
     }
 });

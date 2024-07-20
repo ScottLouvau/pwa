@@ -26,7 +26,14 @@ startup();
 async function startup() {
   // Notify the browser of the associated service worker
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./service-worker.js', { scope: './' });
+    await navigator.serviceWorker.register('./service-worker.js', { scope: './' });
+
+    navigator.serviceWorker.addEventListener("message", (event) => {
+      document.querySelector(".title").title = event.data;
+      console.log(event.data);
+    });
+
+    navigator.serviceWorker.controller.postMessage("getVersion");
   }
 
   // Retrieve all words (answers are first, then other valid words)
@@ -242,13 +249,14 @@ function deleteKey() {
 
 function submitGuess() {
   const activeTiles = [...getActiveTiles()];
-  if (activeTiles.length !== WORD_LENGTH) {
+  const guess = guesses[guesses.length - 1];
+
+  if (guess.length !== WORD_LENGTH) {
     showAlert("Not enough letters");
     animate(activeTiles, "shake", 0);
     return;
   }
 
-  const guess = guesses[guesses.length - 1];
   if (answer !== guess && !dictionary.includes(guess)) {
     showAlert("Not in word list");
     shakeTiles(activeTiles);
@@ -401,5 +409,7 @@ function animate(items, animationName, delayBetweenItemsMs) {
 }
 
 function deleteCaches() {
-  navigator.serviceWorker.controller.postMessage("deleteCaches");
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.controller.postMessage("deleteCaches");
+  }
 }
