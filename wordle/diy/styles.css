@@ -129,7 +129,7 @@ body {
   align-content: center;
   grid-template-columns: repeat(5, 3.5em);
   grid-template-rows: repeat(6, 3.5em);
-  gap: .35em;
+  gap: .3em;
 }
 
 .tile {

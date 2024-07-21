@@ -1,7 +1,6 @@
 const dictionary = [];
-let answer = null;
-
-const today = todayString();
+let answer = "";
+let today = "";
 let guesses = [""];
 
 const ANSWER_COUNT = 2315;
@@ -47,11 +46,17 @@ async function startup() {
 async function chooseAnswer() {
   const mode = gameMode.value;
   gameMode.blur();
+  
+  today = todayString();
+  answer = "";
+  guesses = [""];
 
   if (mode === "Global") {
     // Global: Fetch current answer
-    const official = await fetch(`https://scottlouvau.github.io/fetch/data/wordle/${today}.json`).then((res) => res.json());
-    answer = official.solution;
+    await fetch(`https://scottlouvau.github.io/fetch/data/wordle/${today}.json`)
+      .then((res) => res.json())
+      .then((res) => answer = res.solution)
+      .catch((error) => showAlert(`Could not get ${today}.json. ${error}`));
   } else if (mode === "V1") {
     // V1: Choose an answer (from the answer prefix of the word list, moving down one answer each day)
     answer = dictionary[daysSinceLaunch() % ANSWER_COUNT];
@@ -62,45 +67,16 @@ async function chooseAnswer() {
     showAlert("Error: Unknown Game Mode");
   }
 
-  if (mode === "Random") {
-    guesses = [""];
-  } else {
-    let state = JSON.parse(localStorage.getItem(`${mode}-state`));
-    guesses = (state?.date === today) ? state.guesses : [""];
+  if (answer !== null) {
+    if (mode === "Random") {
+      guesses = [""];
+    } else {
+      let state = JSON.parse(localStorage.getItem(`${mode}-state`));
+      guesses = (state?.date === today) ? state.guesses : [""];
+    }
   }
 
   syncInterface();
-}
-
-// Test: getResponse("papal", "apple") == [ "yellow", "yellow", "green", "black", "yellow" ]
-//  P1 is yellow (matches unmatched P2 in apple)
-//  P3 is green  (matches, right position)
-//  A2 is yellow (uses up 'A' in answer)
-//  A4 is black  (no more unmatched 'A')
-//  L5 is black  (no 'L' in answer at all)
-function getResponse(guess, answer) {
-  if (guess.length < WORD_LENGTH) return null;
-
-  let unmatched = {};
-  for (let i = 0; i < guess.length; i++) {
-    if (guess[i] !== answer[i]) {
-      unmatched[answer[i]] = unmatched[answer[i]] + 1 || 1;
-    }
-  }
-
-  let result = [];
-  for (let i = 0; i < guess.length; i++) {
-    if (guess[i] === answer[i]) {
-      result.push(Response.Green);
-    } else if (unmatched[guess[i]] > 0) {
-      result.push(Response.Yellow);
-      unmatched[guess[i]]--;
-    } else {
-      result.push(Response.Black);
-    }
-  }
-  
-  return result;
 }
 
 function syncInterface() {
@@ -153,8 +129,10 @@ function syncInterface() {
     }
   }
 
-  if (guesses.length <= GUESS_LIMIT && !guesses.includes(answer)) {
+  if (answer !== "" && guesses.length <= GUESS_LIMIT && !guesses.includes(answer)) {
     startInteraction();
+  } else {
+    stopInteraction
   }
 }
 
@@ -172,6 +150,39 @@ function todayString() {
 function daysSinceLaunch() {
   const msPerDay = 1000 * 60 * 60 * 24;
   return Math.floor((new Date() - new Date(2021, 5, 19)) / msPerDay);
+}
+
+
+// Test: getResponse("papal", "apple") == [ "yellow", "yellow", "green", "black", "yellow" ]
+//  P1 is yellow (matches unmatched P2 in apple)
+//  P3 is green  (matches, right position)
+//  A2 is yellow (uses up 'A' in answer)
+//  A4 is black  (no more unmatched 'A')
+//  L5 is black  (no 'L' in answer at all)
+function getResponse(guess, answer) {
+  if (guess?.length !== WORD_LENGTH) return null;
+  if (answer?.length !== WORD_LENGTH) return null;
+
+  let unmatched = {};
+  for (let i = 0; i < guess.length; i++) {
+    if (guess[i] !== answer[i]) {
+      unmatched[answer[i]] = unmatched[answer[i]] + 1 || 1;
+    }
+  }
+
+  let result = [];
+  for (let i = 0; i < guess.length; i++) {
+    if (guess[i] === answer[i]) {
+      result.push(Response.Green);
+    } else if (unmatched[guess[i]] > 0) {
+      result.push(Response.Yellow);
+      unmatched[guess[i]]--;
+    } else {
+      result.push(Response.Black);
+    }
+  }
+  
+  return result;
 }
 
 function startInteraction() {
