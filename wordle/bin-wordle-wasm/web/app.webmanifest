@@ -2,6 +2,7 @@
     "name": "Wordle Analyze",
     "short_name": "Wordle Analyze",
     "start_url": "./",
+    "scope": "./",
     "display": "standalone",
     "id": "com.relentlessoptimizer.wordleanalyze",
     "icons": [

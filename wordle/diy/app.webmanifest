@@ -1,22 +1,23 @@
 {
     "name": "Wordle DIY",
     "short_name": "Wordle DIY",
-    "start_url": "../",
+    "start_url": "./",
+    "scope": "./",
     "display": "standalone",
     "id": "com.relentlessoptimizer.wordle-diy",
     "icons": [
         {
-            "src": "./icon-128x128.png",
+            "src": "./pwa/icon-128x128.png",
             "sizes": "128x128",
             "type": "image/png"
         },
         {
-            "src": "./icon-512x512.png",
+            "src": "./pwa/icon-512x512.png",
             "sizes": "512x512",
             "type": "image/png"
         },
         {
-            "src": "./icon.svg",
+            "src": "./pwa/icon.svg",
             "sizes": "any",
             "type": "image/svg+xml"
         }

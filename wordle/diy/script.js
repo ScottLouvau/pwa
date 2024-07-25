@@ -31,8 +31,6 @@ async function startup() {
       document.querySelector(".title").title = event.data;
       console.log(event.data);
     });
-
-    navigator.serviceWorker.controller.postMessage("getVersion");
   }
 
   // Retrieve all words (answers are first, then other valid words)
@@ -41,6 +39,9 @@ async function startup() {
 
   // Choose an answer and start the game
   await chooseAnswer();
+
+  // Try to request the current app version
+  navigator?.serviceWorker?.controller?.postMessage("getVersion");
 }
 
 async function chooseAnswer() {
@@ -420,7 +421,5 @@ function animate(items, animationName, delayBetweenItemsMs) {
 }
 
 function deleteCaches() {
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.controller.postMessage("deleteCaches");
-  }
+  navigator?.serviceWorker?.controller?.postMessage("deleteCaches");
 }

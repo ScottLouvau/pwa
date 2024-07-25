@@ -4,17 +4,20 @@ const CACHE_PREFIX = "wordle-diy";
 const CACHE_NAME = `${CACHE_PREFIX}-${CACHE_VERSION}`;
 const CACHE_URLS = [
     "./",
-    "./pwa/app.webmanifest",
+    "./app.webmanifest",
     "./pwa/icon.svg",
 ];
 
-async function install() {
+async function install(event) {
     // Delete older caches for this app
     for (const name of await caches.keys()) {
         if (name.startsWith(CACHE_PREFIX) && name !== CACHE_NAME) {
             await caches.delete(name);
         }
     }
+
+    // Activate the new service worker immediately
+    event.waitUntil(self.skipWaiting());
 
     // Pre-cache specified resources in the current cache name
     const cache = await caches.open(CACHE_NAME);
@@ -51,7 +54,11 @@ async function deleteCaches() {
 }
 
 self.addEventListener("install", (event) => {
-    event.waitUntil(install());
+    event.waitUntil(install(event));
+});
+
+self.addEventListener('activate', (event) => {
+    event.waitUntil(self.clients.claim()); 
 });
 
 self.addEventListener("fetch", (event) => {
