@@ -56,7 +56,7 @@ async function chooseAnswer() {
     // Global: Fetch current answer
     await fetch(`https://scottlouvau.github.io/fetch/data/wordle/${today}.json`)
       .then((res) => res.json())
-      .then((res) => answer = res.solution)
+      .then((res) => { answer = res.solution; showAlert("Good Luck!"); })
       .catch((error) => showAlert(`Could not get ${today}.json. ${error}`));
   } else if (mode === "V1") {
     // V1: Choose an answer (from the answer prefix of the word list, moving down one answer each day)
@@ -138,7 +138,8 @@ function syncInterface() {
 }
 
 function analyze() {
-  let url = "https://scottlouvau.github.io/pwa/wordle-analyze/?g=" + guesses.join(",").replace(/,*$/, "");
+  //let url = "https://scottlouvau.github.io/pwa/wordle-analyze/?g=" + guesses.join(",").replace(/,*$/, "");
+  let url = "../wordle-analyze/?g=" + guesses.join(",").replace(/,*$/, "");
   if (!url.endsWith(answer)) { url += "," + answer; }
 
   window.open(url, "_blank");
@@ -376,7 +377,10 @@ function showStatistics() {
     bar.classList.add("bar");
     bar.style.width = `${percentage}%`;
     bar.textContent = `${gameCount}`;
-    bar.dataset.count = gameCount;
+
+    if (guesses.length - 1 === i + 1) {
+      bar.classList.add("current");
+    }
     
     const turnCount = document.createElement("div");
     turnCount.textContent = `${i + 1}`;    
