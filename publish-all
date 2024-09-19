@@ -9,11 +9,6 @@ cd ./wordle/bin-wordle-wasm
 cd ../..
 ./hash-files/target/release/hash-files ./publish/wordle-analyze ./publish/wordle-analyze/service-worker.js
 
-cd ./wordle/v1
-./publish
-cd ../..
-./hash-files/target/release/hash-files ./publish/wordle-v1 ./publish/wordle-v1/service-worker.js
-
 cd ./wordle/diy
 ./publish
 cd ../..

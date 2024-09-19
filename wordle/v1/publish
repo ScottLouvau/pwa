@@ -1,5 +1,0 @@
-#!/bin/bash
-DEST=../../publish/wordle-v1
-rm -rf "$DEST"
-mkdir "$DEST"
-cp -r * "$DEST"
