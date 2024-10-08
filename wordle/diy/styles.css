@@ -4,19 +4,28 @@
 }
 
 input {
+  color: white;
+  background-color: hsl(240, 3%, 7%);
+  border: 1px solid hsl(240, 2%, 23%);
   border-radius: 0;
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
-  border: 1px solid hsl(240, 2%, 23%);
 }
 
 button { 
+  color: white;
+  background-color: hsl(240, 3%, 7%);
   border: 1px solid hsl(240, 2%, 23%);
   border-radius: 0.25em;
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
+}
+
+select {
+  color: white;
+  background-color: hsl(240, 3%, 7%);
 }
 
 body {
