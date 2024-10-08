@@ -1,8 +1,6 @@
 *, *::after, *::before {
   box-sizing: border-box;
-  font-family: Arial;
-  color: white;
-  background-color: hsl(240, 3%, 7%);
+  font-family: Arial;  
 }
 
 input {
@@ -22,6 +20,7 @@ button {
 }
 
 body {
+  color: white;
   background-color: hsl(240, 3%, 7%);
   display: flex;
   flex-direction: column;
@@ -296,6 +295,10 @@ body {
   display: flex;
   align-items: center;
   background-color: black;
+}
+
+.overlay .statistics .row.average {
+  margin-top: 1em;
 }
 
 .overlay .statistics .row .bar {

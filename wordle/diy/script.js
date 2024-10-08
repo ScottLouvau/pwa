@@ -368,7 +368,9 @@ function showStatistics() {
 
   const record = JSON.parse(localStorage.getItem("record")) || [0, 0, 0, 0, 0, 0, 0];
   const maxGameCount = Math.max(1, record.reduce((a, b) => Math.max(a, b)));
-  
+  let totalGames = 0;
+  let totalTurns = 0;
+
   for (let i = 0; i < record.length; i++) {
     const gameCount = record[i];
     const percentage = Math.floor(100 * gameCount / maxGameCount);
@@ -390,7 +392,16 @@ function showStatistics() {
     row.appendChild(turnCount);
     row.appendChild(bar);
     statistics.appendChild(row);
+
+    totalGames += gameCount;
+    totalTurns += gameCount * (i + 1);
   }
+
+  const average = document.createElement("div");
+  average.textContent = `${totalTurns} / ${totalGames} = ${(totalTurns / totalGames).toFixed(3)} turn average`;
+  average.classList.add("average");
+  average.classList.add("row");
+  statistics.appendChild(average);
 
   const analyzeButton = document.createElement("button");
   analyzeButton.textContent = "Analyze";
