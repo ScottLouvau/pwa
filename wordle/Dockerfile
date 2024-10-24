@@ -43,7 +43,7 @@ RUN cargo build --release
 FROM ${PROD_IMAGE}
 WORKDIR /app
 COPY ./data ./data/
-COPY --from=builder --chown=base:nonroot /usr/local/wordle/bin-wordle-http/target/release/wordle-http ./
+COPY --from=builder --chown=nonroot:nonroot /usr/local/wordle/bin-wordle-http/target/release/wordle-http ./
 
 USER nonroot
 
