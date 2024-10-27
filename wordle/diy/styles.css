@@ -72,8 +72,8 @@ body {
 .keyboard {
   display: grid;
   grid-template-columns: repeat(20, minmax(auto, 1.5em));
-  grid-auto-rows: 3.5em;
-  gap: 0.35em;
+  grid-auto-rows: 5em;
+  gap: 0.45em;
   justify-content: center;
   padding-bottom: 0.25em;
   touch-action: manipulation;
