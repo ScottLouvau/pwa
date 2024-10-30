@@ -96,6 +96,8 @@ function syncInterface() {
   });
   
   // Re-add guesses
+  let keyColors = {};
+
   for (let i = 0; i < GUESS_LIMIT; i++) {
     let guess = guesses[i] || "";
     let response = responses[i] || [];
@@ -116,9 +118,7 @@ function syncInterface() {
       if (color) {
         tile.dataset.state = color;
         tile.classList.add(color);
-
-        let key = keyboard.querySelector(`[data-key="${letter}"i]`);
-        key.classList.add(color);
+        keyColors[letter] = supercedingColor(keyColors[letter], color);
       } else {
         if (letter) {
           tile.dataset.state = "active";
@@ -129,11 +129,24 @@ function syncInterface() {
     }
   }
 
+  for (const [letter, color] of Object.entries(keyColors)) {
+    let key = keyboard.querySelector(`[data-key="${letter}"i]`);
+    key.classList.add(color);
+  }
+
   if (answer !== "" && guesses.length <= GUESS_LIMIT && !guesses.includes(answer)) {
     startInteraction();
   } else {
     stopInteraction();
   }
+}
+
+function supercedingColor(left, right) {
+  if (left === Response.Green || right === Response.Green) return Response.Green;
+  if (left === Response.Yellow || right === Response.Yellow) return Response.Yellow;
+  if (left === Response.Black || right === Response.Black) return Response.Black;
+
+  return null;
 }
 
 function analyze() {

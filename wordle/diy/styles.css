@@ -91,11 +91,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: hsl(
-    var(--hue, 200),
-    var(--saturation, 1%),
-    calc(var(--lightness-offset, 0%) + var(--lightness, 51%))
-  );
+  background-color: rgb(129, 130, 131);
   color: white;
   fill: white;
   text-transform: uppercase;
@@ -117,23 +113,19 @@ body {
 }
 
 .key:hover, .key:focus {
-  --lightness-offset: 10%;
+  opacity: 0.6;
 }
 
 .key.black {
-  --lightness: 23%;
+  background-color: rgb(58, 59, 59);
 }
 
 .key.yellow {
-  --hue: 49;
-  --saturation: 51%;
-  --lightness: 47%;
+  background-color: rgb(181, 159, 59);
 }
 
 .key.green {
-  --hue: 115;
-  --saturation: 29%;
-  --lightness: 43%;
+  background-color: rgb(83, 141, 78);;
 }
 
 .guess-grid {
