@@ -33,10 +33,10 @@ body {
   background-color: hsl(240, 3%, 7%);
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  min-height: 100svh;
   margin: 0;
   padding: 0.5em;
-  font-size: clamp(.5rem, 2.5vmin, 1.5rem);
+  font-size: clamp(.5rem, 2svh, 1.5rem);
 }
 
 .spacer {
@@ -67,13 +67,17 @@ body {
   text-align: right;
 }
 
+#resolution {
+  font-size: 50%;
+}
+
 /* touch-action: manipulation to try to prevent double-tap zoom behavior */
 
 .keyboard {
   display: grid;
   grid-template-columns: repeat(20, minmax(auto, 1.5em));
-  grid-auto-rows: 5em;
-  gap: 0.45em;
+  grid-auto-rows: 4em;
+  gap: 0.4em;
   justify-content: center;
   padding-bottom: 0.25em;
   touch-action: manipulation;
@@ -103,6 +107,7 @@ body {
 
 .key.large {
   grid-column: span 3;
+  font-size: 80%;
 }
 
 .key > svg {

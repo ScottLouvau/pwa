@@ -19,15 +19,16 @@
   <div class="alert-container" data-alert-container></div>
   <div class="header">
     <div class="side">
-    </div>
-    <div class="title" onclick="deleteCaches()">WORDLE</div>
-    <div class="side right">
       <button onclick="showStatistics()" title="Show Statistics">Stats</button>
       <select id="game-mode" onchange="chooseAnswer()">
         <option value="Global" selected>Global</option>
         <option value="V1">V1</option>
         <option value="Random">Random</option>
       </select>
+    </div>
+    <div class="title">WORDLE</div>
+    <div class="side right">
+      <span id="resolution"></span>
     </div>
   </div>
   <div class="spacer"></div>
@@ -86,7 +87,7 @@
     <button class="key" data-key="K">K</button>
     <button class="key" data-key="L">L</button>
     <div class="space"></div>
-    <button data-enter class="key large">Enter</button>
+    <button data-enter class="key large">RET</button>
     <button class="key" data-key="Z">Z</button>
     <button class="key" data-key="X">X</button>
     <button class="key" data-key="C">C</button>
@@ -95,10 +96,9 @@
     <button class="key" data-key="N">N</button>
     <button class="key" data-key="M">M</button>
     <button data-delete class="key large">
-      Del
+      DEL
     </button>
   </div>
-  <div class="spacer"></div>
   <div id="overlay" class="overlay">
   </div>
 </body>

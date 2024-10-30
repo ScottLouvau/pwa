@@ -16,9 +16,6 @@ const guessGrid = document.querySelector("[data-guess-grid]");
 const overlay = document.getElementById("overlay");
 const Response = { "Green": "green", "Yellow": "yellow", "Black": "black" };
 
-// iPad:
-//  - Test caching behavior
-//  - Verify works offline (V1 mode)
 
 startup();
 
@@ -42,6 +39,8 @@ async function startup() {
 
   // Try to request the current app version
   navigator?.serviceWorker?.controller?.postMessage("getVersion");
+
+  document.querySelector(".title").addEventListener("click", deleteCaches);
 }
 
 async function chooseAnswer() {
@@ -133,7 +132,7 @@ function syncInterface() {
   if (answer !== "" && guesses.length <= GUESS_LIMIT && !guesses.includes(answer)) {
     startInteraction();
   } else {
-    stopInteraction
+    stopInteraction();
   }
 }
 
@@ -437,4 +436,5 @@ function animate(items, animationName, delayBetweenItemsMs) {
 
 function deleteCaches() {
   navigator?.serviceWorker?.controller?.postMessage("deleteCaches");
+  showAlert("Caches Deleted");
 }
