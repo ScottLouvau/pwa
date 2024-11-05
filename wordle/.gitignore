@@ -1,4 +1,6 @@
 bin-wordle-wasm/data/
 target/
+diy/data/
+diy/pkg/
 
 Cargo.lock
