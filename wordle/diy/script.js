@@ -1,9 +1,10 @@
-const dictionary = [];
+const valid = [];
+const answers = [];
+
 let answer = "";
 let today = "";
 let guesses = [""];
 
-const ANSWER_COUNT = 2315;
 const WORD_LENGTH = 5;
 const GUESS_LIMIT = 6;
 
@@ -30,9 +31,12 @@ async function startup() {
     });
   }
 
-  // Retrieve all words (answers are first, then other valid words)
-  const words = await fetch('./data/words.txt').then((res) => res.text()).then((res) => res.split('\n'));
-  dictionary.push(...words);
+  // Retrieve answers and valid words
+  const answer_words = await fetch('./data/answers.txt').then((res) => res.text()).then((res) => res.split('\n'));
+  answers.push(...answer_words);
+
+  const valid_words = await fetch('./data/valid.txt').then((res) => res.text()).then((res) => res.split('\n'));
+  valid.push(...valid_words);
 
   // Choose an answer and start the game
   await chooseAnswer();
@@ -59,10 +63,10 @@ async function chooseAnswer() {
       .catch((error) => showAlert(`Could not get ${today}.json. ${error}`));
   } else if (mode === "V1") {
     // V1: Choose an answer (from the answer prefix of the word list, moving down one answer each day)
-    answer = dictionary[daysSinceLaunch() % ANSWER_COUNT];
+    answer = answers[daysSinceLaunch() % answers.length];
   } else if (mode === "Random") {
     // Random: Choose a random word in the answer prefix of the word list
-    answer = dictionary[Math.floor(Math.random() * ANSWER_COUNT)];
+    answer = answers[Math.floor(Math.random() * answers.length)];
   } else {
     showAlert("Error: Unknown Game Mode");
   }
@@ -282,7 +286,7 @@ function submitGuess() {
     return;
   }
 
-  if (answer !== guess && !dictionary.includes(guess)) {
+  if (answer !== guess && !valid.includes(guess)) {
     showAlert("Not in word list");
     shakeTiles(activeTiles);
     return;
