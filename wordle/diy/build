@@ -1,0 +1,14 @@
+#!/bin/bash
+
+mkdir -p data
+cp ../data/v12.txt ./data/
+cp ../data/2315/valid.txt ./data/valid.txt
+cp ../data/2315/answers.txt ./data/answers.txt
+
+cd ../bin-wordle-wasm
+./build
+cd ../diy
+
+mkdir -p ./pkg
+cp "../bin-wordle-wasm/pkg/wordle_wasm_bg.wasm" "./pkg/wordle_wasm_bg.wasm"
+cp "../bin-wordle-wasm/pkg/wordle_wasm.js" "./pkg/wordle_wasm.js"

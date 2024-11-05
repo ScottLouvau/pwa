@@ -1,5 +1,9 @@
+import init, { Wordle } from "./pkg/wordle_wasm.js";
+
 const valid = [];
 const answers = [];
+let strategy = "";
+let analyzer = null;
 
 let answer = "";
 let today = "";
@@ -17,7 +21,6 @@ const guessGrid = document.querySelector("[data-guess-grid]");
 const overlay = document.getElementById("overlay");
 const Response = { "Green": "green", "Yellow": "yellow", "Black": "black" };
 
-
 startup();
 
 async function startup() {
@@ -32,11 +35,16 @@ async function startup() {
   }
 
   // Retrieve answers and valid words
-  const answer_words = await fetch('./data/answers.txt').then((res) => res.text()).then((res) => res.split('\n'));
-  answers.push(...answer_words);
+  const answer_text = await fetch('./data/answers.txt').then((res) => res.text());
+  answers.push(...answer_text.split('\n'));
 
-  const valid_words = await fetch('./data/valid.txt').then((res) => res.text()).then((res) => res.split('\n'));
-  valid.push(...valid_words);
+  const valid_text = await fetch('./data/valid.txt').then((res) => res.text());
+  valid.push(...valid_text.split('\n'));
+
+  // Retrieve strategy and prepare Wordle analyzer
+  strategy = await fetch('./data/v12.txt').then((res) => res.text());
+  await init();
+  analyzer = Wordle.new(valid_text, answer_text, strategy);
 
   // Choose an answer and start the game
   await chooseAnswer();
@@ -45,6 +53,8 @@ async function startup() {
   navigator?.serviceWorker?.controller?.postMessage("getVersion");
 
   document.querySelector(".title").addEventListener("click", deleteCaches);
+  document.getElementById("game-mode").addEventListener("change", chooseAnswer);
+  document.getElementById("show-statistics").addEventListener("click", showStatistics);
 }
 
 async function chooseAnswer() {
@@ -88,7 +98,7 @@ function syncInterface() {
   let tiles = guessGrid.querySelectorAll(".tile");
 
   // Clear tiles
-  for (tile of tiles) {
+  for (const tile of tiles) {
     tile.dataset.letter = "";
     tile.dataset.state = "";
     tile.classList.remove("green", "yellow", "black");
@@ -154,11 +164,27 @@ function supercedingColor(left, right) {
 }
 
 function analyze() {
-  //let url = "https://scottlouvau.github.io/pwa/wordle-analyze/?g=" + guesses.join(",").replace(/,*$/, "");
-  let url = "../wordle-analyze/?g=" + guesses.join(",").replace(/,*$/, "");
-  if (!url.endsWith(answer)) { url += "," + answer; }
+  let guesses_joined = guesses.join(",").replace(/,*$/, "");
+  if (!guesses_joined.endsWith(answer)) { guesses_joined += "," + answer; }
 
-  window.open(url, "_blank");
+  const start = performance.now();
+  let response = "";
+  
+  try {
+    response = analyzer.assess(guesses_joined, 10000);
+  } catch (e) {
+    response = e;
+  }
+
+  const time = performance.now() - start;
+  response += `\n\nTime: ${time.toFixed(2)} ms`;
+
+  const analysis_box = document.createElement("div");
+  analysis_box.classList.add("analysis");
+  analysis_box.textContent = response;
+  
+  overlay.innerHTML = "";
+  overlay.appendChild(analysis_box);
 }
 
 function todayString() {

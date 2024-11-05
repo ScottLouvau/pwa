@@ -323,3 +323,17 @@ body {
 .overlay .statistics button {
   font-size: 100%;
 }
+
+.overlay .analysis {
+  font-family: monospace;
+  font-size: 80%;
+  white-space: pre;
+  overflow-y: auto;
+
+  border: solid 1px hsl(204, 7%, 85%);
+  border-radius: 0.4em;
+  background-color: black;
+  padding: 1em;
+  width: 90%;
+  max-width: 40em;
+}
