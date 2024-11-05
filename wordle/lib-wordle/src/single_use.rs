@@ -5,19 +5,10 @@ use std::{fs, path::Path, collections::HashMap, ops::Range};
 /// One-Time: Merge answers and Guesses to emit 'Valid.txt'
 pub fn merge_answers_into_guesses(base_folder: &str) -> () {
     let answers_path = format!("{}/{}", base_folder, "answers.txt");
-    let mut answers = Word::parse_file(Path::new(&answers_path));
+    let answers = Word::parse_file(Path::new(&answers_path));
 
     let guesses_path = format!("{}/{}", base_folder, "guesses.txt");
     let guesses = Word::parse_file(&Path::new(&guesses_path));
-
-    // Write answers sorted
-    answers.sort();
-    let sorted = answers
-        .iter()
-        .map(|w| w.to_string())
-        .collect::<Vec<String>>();
-    fs::write(&answers_path, sorted.join("\n"))
-        .expect(&format!("Unable to write sorted '{}'", &answers_path));
 
     // Merge and sort answers and guesses
     let mut merged: Vec<String> = answers
