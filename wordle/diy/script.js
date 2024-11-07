@@ -478,5 +478,9 @@ function animate(items, animationName, delayBetweenItemsMs) {
 
 function deleteCaches() {
   navigator?.serviceWorker?.controller?.postMessage("deleteCaches");
+
+  // Try to force re-layout to see if I can mitigate the "keyboard sort of shows up" bug on iPad
+  let unused = window.visualViewport.height;
+
   showAlert("Caches Deleted");
 }

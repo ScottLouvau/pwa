@@ -79,7 +79,7 @@ body {
   grid-auto-rows: 4em;
   gap: 0.4em;
   justify-content: center;
-  padding-bottom: 0.25em;
+  padding-bottom: 0.5em;
   touch-action: manipulation;
 }
 
