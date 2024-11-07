@@ -55,6 +55,7 @@ async function startup() {
   document.querySelector(".title").addEventListener("click", deleteCaches);
   document.getElementById("game-mode").addEventListener("change", chooseAnswer);
   document.getElementById("show-statistics").addEventListener("click", showStatistics);
+  document.getElementById("copy-image").addEventListener("click", toClipboardImage);
 }
 
 async function chooseAnswer() {
@@ -68,7 +69,7 @@ async function chooseAnswer() {
     // Global: Fetch current answer
     await fetch(`https://scottlouvau.github.io/fetch/data/wordle/${today}.json`)
       .then((res) => res.json())
-      .then((res) => { answer = res.solution; showAlert("Good Luck!"); })
+      .then((res) => { answer = res.solution; })
       .catch((error) => showAlert(`Could not get ${today}.json. ${error}`));
   } else if (mode === "V1") {
     // V1: Choose an answer (from the answer prefix of the word list, moving down one answer each day)
@@ -90,6 +91,11 @@ async function chooseAnswer() {
   }
 
   syncInterface();
+
+  // Confirm answer loading for Global puzzles, if not already solved
+  if (mode === "Global" && guesses.length < 2) {
+    showAlert("Good Luck!");
+  }
 }
 
 function syncInterface() {
@@ -483,4 +489,58 @@ function deleteCaches() {
   let unused = window.visualViewport.height;
 
   showAlert("Caches Deleted");
+}
+
+const TILE_SIZE = 72;
+const TILE_MARGIN = 6;
+const OUTER_MARGIN = 3;
+
+function toClipboardImage() {
+  const canvas = document.createElement("canvas");
+  canvas.width = 5 * (TILE_SIZE + TILE_MARGIN) - TILE_MARGIN + 2 * OUTER_MARGIN;
+  canvas.height = (guesses.length - 1) * (TILE_SIZE + TILE_MARGIN) - TILE_MARGIN + 2 * OUTER_MARGIN;
+
+  const context = canvas.getContext("2d");
+
+  // Background Color
+  context.fillStyle = "hsl(240, 3%, 7%)";
+  context.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Text drawing setup
+  context.font = "bold 42px Arial";
+  context.textAlign = "center";
+  context.textBaseline = "middle";
+
+  // Draw board tiles for guesses
+  let responses = guesses.map((guess, index) => getResponse(guess, answer));
+  for (let i = 0; i < (guesses.length - 1); i++) {
+    let guess = guesses[i] || "";
+    let response = responses[i] || [];
+
+    for (let j = 0; j < WORD_LENGTH; j++) {
+      const left = j * (TILE_SIZE + TILE_MARGIN) + OUTER_MARGIN;
+      const top = i * (TILE_SIZE + TILE_MARGIN) + OUTER_MARGIN;
+
+      const color = responseToColor(response[j]);
+      context.fillStyle = color;
+      context.fillRect(left, top, TILE_SIZE, TILE_SIZE);
+
+      const letter = guess[j].toLocaleUpperCase();
+      context.fillStyle = "white";
+      context.fillText(letter, left + (TILE_SIZE * 0.5), top + (TILE_SIZE * 0.55));
+    }
+  }
+
+  // Copy canvas contents to clipboard
+  canvas.toBlob((blob) => {
+    navigator.clipboard.write([ new ClipboardItem({ "image/png": blob }) ]);
+    showAlert("Image Copied");
+  });
+}
+
+function responseToColor(response) {
+  if (response === "green") return "hsl(115, 29%, 43%)";
+  if (response === "yellow") return "hsl(49, 51%, 47%)";
+  if (response === "black") return "hsl(240, 2%, 23%)";
+  return "hsl(200, 1%, 34%)";
 }
