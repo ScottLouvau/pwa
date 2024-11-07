@@ -59,8 +59,7 @@ async function startup() {
 
 async function chooseAnswer() {
   const mode = gameMode.value;
-  gameMode.blur();
-  
+
   today = todayString();
   answer = "";
   guesses = [""];

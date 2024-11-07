@@ -25,7 +25,8 @@ async function install(event) {
 }
 
 async function cacheFirst(request) {
-    if (request.url.includes("localhost")) {
+    // Don't cache during development (localhost or non-HTTPS)
+    if (request.url.includes("localhost") || request.url.startsWith("http://")) {
         return fetch(request);
     }
 
