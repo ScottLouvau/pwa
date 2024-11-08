@@ -492,8 +492,8 @@ function deleteCaches() {
 }
 
 const TILE_SIZE = 72;
-const TILE_MARGIN = 6;
-const OUTER_MARGIN = 3;
+const TILE_MARGIN = 4;
+const OUTER_MARGIN = 2;
 
 function toClipboardImage() {
   const canvas = document.createElement("canvas");
