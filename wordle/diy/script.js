@@ -484,16 +484,13 @@ function animate(items, animationName, delayBetweenItemsMs) {
 
 function deleteCaches() {
   navigator?.serviceWorker?.controller?.postMessage("deleteCaches");
-
-  // Try to force re-layout to see if I can mitigate the "keyboard sort of shows up" bug on iPad
-  let unused = window.visualViewport.height;
-
   showAlert("Caches Deleted");
 }
 
-const TILE_SIZE = 72;
-const TILE_MARGIN = 4;
-const OUTER_MARGIN = 2;
+// Measured from iPad Landscape half-screen screenshot
+const TILE_SIZE = 112;
+const TILE_MARGIN = 9;
+const OUTER_MARGIN = 4;
 
 function toClipboardImage() {
   const canvas = document.createElement("canvas");
@@ -507,7 +504,7 @@ function toClipboardImage() {
   context.fillRect(0, 0, canvas.width, canvas.height);
 
   // Text drawing setup
-  context.font = "bold 42px Arial";
+  context.font = "bold 66px Arial";
   context.textAlign = "center";
   context.textBaseline = "middle";
 
@@ -527,7 +524,7 @@ function toClipboardImage() {
 
       const letter = guess[j].toLocaleUpperCase();
       context.fillStyle = "white";
-      context.fillText(letter, left + (TILE_SIZE * 0.5), top + (TILE_SIZE * 0.55));
+      context.fillText(letter, left + (TILE_SIZE * 0.5), top + (TILE_SIZE * 0.51));
     }
   }
 
