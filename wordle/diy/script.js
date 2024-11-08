@@ -532,9 +532,22 @@ function toClipboardImage() {
   }
 
   // Copy canvas contents to clipboard
-  canvas.toBlob((blob) => {
-    navigator.clipboard.write([ new ClipboardItem({ "image/png": blob }) ]);
-    showAlert("Image Copied");
+  navigator.clipboard.write([new ClipboardItem({ "image/png": toBlobPromise(canvas) })])
+    .then(() => showAlert("Image Copied"))
+    .catch((error) => showAlert(`Error: ${error}`));
+}
+
+// Convert HtmlCanvasElement.toBlob to Promise form
+// (required by Safari)
+function toBlobPromise(canvas) {
+  return new Promise((resolve, reject) => {
+    canvas.toBlob((blob) => {
+      if (blob) {
+        resolve(blob);
+      } else {
+        reject(new Error("Canvas.toBlob failed"));
+      }
+    });
   });
 }
 
