@@ -524,7 +524,7 @@ function toClipboardImage() {
 
       const letter = guess[j].toLocaleUpperCase();
       context.fillStyle = "white";
-      context.fillText(letter, left + (TILE_SIZE * 0.5), top + (TILE_SIZE * 0.51));
+      context.fillText(letter, left + (TILE_SIZE * 0.5), top + (TILE_SIZE * 0.5));
     }
   }
 
