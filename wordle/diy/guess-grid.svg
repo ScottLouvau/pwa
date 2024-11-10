@@ -4,26 +4,24 @@
   <!-- X/Y :   8, 248, 488, 728, 968 -->
   <!-- Text: 120, 360, 600, 840, 1080 -->
 
-  <!-- 
-    In SVG Text:
-        'color' is 'fill'
-        'text-align' is 'text-anchor'
-  -->
   <style>
     text {
+      <!-- SVG form of 'color' -->
       fill: white;
       font-family: Arial;
       font-weight: bold;
       font-size: 132px;
 
+      <!-- SVG form of text-align, vertical-align -->
       text-anchor: middle;
       dominant-baseline: central;
+
+      transform: translate(110px, 110px);
     }
 
     .tile {
         width: 222px;
         height: 222px;
-
         stroke-width: 4px;
     }
 
@@ -47,38 +45,124 @@
         stroke: #565758;
     }
 
-    .c1 { x: 10; }
-    .c2 { x: 250; }
-    .c3 { x: 490; }
-    .c4 { x: 730; }
-    .c5 { x: 970; }
+    .gr1 { transform: translateY(10px); }
+    .gr2 { transform: translateY(250px); }
+    .gr3 { transform: translateY(490px); }
+    .gr4 { transform: translateY(730px); }
+    .gr5 { transform: translateY(970px); }
 
-    .r1 { y: 10; }
-    .r2 { y: 250; }
-    .r3 { y: 490; }
-    .r4 { y: 730; }
-    .r5 { y: 970; }
+    .gc1 { transform: translateX(10px); }
+    .gc2 { transform: translateX(250px); }
+    .gc3 { transform: translateX(490px); }
+    .gc4 { transform: translateX(730px); }
+    .gc5 { transform: translateX(970px); }
   </style>
 
   <!-- Background -->
   <rect x="0" y="0" width="1200" height="1200" fill="#111112" />
 
-  <rect class="r1 c1 tile green" />
-  <text x="120" y="120">C</text>
+  <g class="gr1">
+    <g class="gc1">
+        <rect class="tile black" />
+        <text>C</text>
+    </g>
 
-  <rect class="r1 c2 tile yellow" />
-  <text x="360" y="120">L</text>
+    <g class="gc2">
+        <rect class="tile black" />
+        <text>L</text>
+    </g>
 
-  <rect class="r1 c3 tile black" />
-  <text x="600" y="120">I</text>
+    <g class="gc3">
+        <rect class="tile yellow" />
+        <text>I</text>
+    </g>
 
-  <rect class="r1 c4 tile black" />
-  <text x="840" y="120">N</text>
+    <g class="gc4">
+        <rect class="tile yellow" />
+        <text>N</text>
+    </g>
 
-  <rect class="r1 c5 tile black" />
-  <text x="1080" y="120">T</text>
+    <g class="gc5">
+        <rect class="tile black" />
+        <text>T</text>
+    </g>
+  </g>
+
+  <g class="gr2">
+    <g class="gc1">
+        <rect class="tile black" />
+        <text>S</text>
+    </g>
+
+    <g class="gc2">
+        <rect class="tile black" />
+        <text>O</text>
+    </g>
+
+    <g class="gc3">
+        <rect class="tile black" />
+        <text>A</text>
+    </g>
+
+    <g class="gc4">
+        <rect class="tile yellow" />
+        <text>R</text>
+    </g>
+
+    <g class="gc5">
+        <rect class="tile yellow" />
+        <text>E</text>
+    </g>
+  </g>
+
+  <g class="gr3">
+    <g class="gc1">
+        <rect class="tile black" />
+        <text>D</text>
+    </g>
+
+    <g class="gc2">
+        <rect class="tile yellow" />
+        <text>I</text>
+    </g>
+
+    <g class="gc3">
+        <rect class="tile green" />
+        <text>N</text>
+    </g>
+
+    <g class="gc4">
+        <rect class="tile green" />
+        <text>E</text>
+    </g>
+
+    <g class="gc5">
+        <rect class="tile green" />
+        <text>R</text>
+    </g>
+  </g>
 
   <!-- Unguessed Tiles -->
-  <rect class="r2 c1 tile empty" />
+  <g class="gr4">
+    <g class="gc1">
+        <rect class="tile empty" />
+    </g>
+
+    <g class="gc2">
+        <rect class="tile empty" />
+    </g>
+
+    <g class="gc3">
+        <rect class="tile empty" />
+    </g>
+
+    <g class="gc4">
+        <rect class="tile empty" />
+    </g>
+
+    <g class="gc5">
+        <rect class="tile empty" />
+    </g>
+  </g>
 
 </svg>
