@@ -1,0 +1,84 @@
+<?xml version="1.0" standalone="no"?>
+<svg width="1200" height="1200" version="1.1" xmlns="http://www.w3.org/2000/svg">
+  <!-- Dimensions: 8px outer margin, 224px tiles, 16px between tiles -->
+  <!-- X/Y :   8, 248, 488, 728, 968 -->
+  <!-- Text: 120, 360, 600, 840, 1080 -->
+
+  <!-- 
+    In SVG Text:
+        'color' is 'fill'
+        'text-align' is 'text-anchor'
+  -->
+  <style>
+    text {
+      fill: white;
+      font-family: Arial;
+      font-weight: bold;
+      font-size: 132px;
+
+      text-anchor: middle;
+      dominant-baseline: central;
+    }
+
+    .tile {
+        width: 222px;
+        height: 222px;
+
+        stroke-width: 4px;
+    }
+
+    .green {
+        fill: #538D4E;
+        stroke: #538D4E;
+    }
+
+    .yellow {
+        fill: #B59F3B;
+        stroke: #B59F3B;
+    }
+
+    .black {
+        fill: #3A3B3B;
+        stroke: #3A3B3B;
+    }
+
+    .empty {
+        fill: #111112;
+        stroke: #565758;
+    }
+
+    .c1 { x: 10; }
+    .c2 { x: 250; }
+    .c3 { x: 490; }
+    .c4 { x: 730; }
+    .c5 { x: 970; }
+
+    .r1 { y: 10; }
+    .r2 { y: 250; }
+    .r3 { y: 490; }
+    .r4 { y: 730; }
+    .r5 { y: 970; }
+  </style>
+
+  <!-- Background -->
+  <rect x="0" y="0" width="1200" height="1200" fill="#111112" />
+
+  <rect class="r1 c1 tile green" />
+  <text x="120" y="120">C</text>
+
+  <rect class="r1 c2 tile yellow" />
+  <text x="360" y="120">L</text>
+
+  <rect class="r1 c3 tile black" />
+  <text x="600" y="120">I</text>
+
+  <rect class="r1 c4 tile black" />
+  <text x="840" y="120">N</text>
+
+  <rect class="r1 c5 tile black" />
+  <text x="1080" y="120">T</text>
+
+  <!-- Unguessed Tiles -->
+  <rect class="r2 c1 tile empty" />
+
+</svg>
