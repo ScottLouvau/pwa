@@ -1,5 +1,5 @@
 <?xml version="1.0" standalone="no"?>
-<svg width="1200" height="1200" version="1.1" xmlns="http://www.w3.org/2000/svg">
+<svg width="1200" height="1440" version="1.1" xmlns="http://www.w3.org/2000/svg">
   <!-- Dimensions: 8px outer margin, 224px tiles, 16px between tiles -->
   <!-- X/Y :   8, 248, 488, 728, 968 -->
   <!-- Text: 120, 360, 600, 840, 1080 -->
@@ -50,6 +50,7 @@
     .gr3 { transform: translateY(490px); }
     .gr4 { transform: translateY(730px); }
     .gr5 { transform: translateY(970px); }
+    .gr6 { transform: translateY(1210px); }
 
     .gc1 { transform: translateX(10px); }
     .gc2 { transform: translateX(250px); }
@@ -59,7 +60,7 @@
   </style>
 
   <!-- Background -->
-  <rect x="0" y="0" width="1200" height="1200" fill="#111112" />
+  <rect x="0" y="0" width="1200" height="1440" fill="#111112" />
 
   <g class="gr1">
     <g class="gc1">
@@ -142,8 +143,57 @@
     </g>
   </g>
 
-  <!-- Unguessed Tiles -->
   <g class="gr4">
+    <g class="gc1">
+        <rect class="tile green" />
+        <text>I</text>
+    </g>
+
+    <g class="gc2">
+        <rect class="tile green" />
+        <text>N</text>
+    </g>
+
+    <g class="gc3">
+        <rect class="tile green" />
+        <text>N</text>
+    </g>
+
+    <g class="gc4">
+        <rect class="tile green" />
+        <text>E</text>
+    </g>
+
+    <g class="gc5">
+        <rect class="tile green" />
+        <text>R</text>
+    </g>
+  </g>
+
+  <!-- Unguessed Tiles -->
+  <g class="gr5">
+    <g class="gc1">
+        <rect class="tile empty" />
+    </g>
+
+    <g class="gc2">
+        <rect class="tile empty" />
+    </g>
+
+    <g class="gc3">
+        <rect class="tile empty" />
+    </g>
+
+    <g class="gc4">
+        <rect class="tile empty" />
+    </g>
+
+    <g class="gc5">
+        <rect class="tile empty" />
+    </g>
+  </g>
+
+  <g class="gr6">
     <g class="gc1">
         <rect class="tile empty" />
     </g>
