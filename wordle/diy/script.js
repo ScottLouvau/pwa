@@ -503,10 +503,10 @@ function toClipboardImage() {
   context.fillStyle = "hsl(240, 3%, 7%)";
   context.fillRect(0, 0, canvas.width, canvas.height);
 
-  // Text drawing setup
+  // Text drawing settings; vertical align alphabetic because 'middle' isn't consistent across browsers
   context.font = "bold 66px Arial";
-  context.textAlign = "center";
-  context.textBaseline = "middle";
+  context.textAlign = "left";
+  context.textBaseline = "alphabetic";
 
   // Draw board tiles for guesses
   let responses = guesses.map((guess, index) => getResponse(guess, answer));
@@ -515,16 +515,23 @@ function toClipboardImage() {
     let response = responses[i] || [];
 
     for (let j = 0; j < WORD_LENGTH; j++) {
-      const left = j * (TILE_SIZE + TILE_MARGIN) + OUTER_MARGIN;
-      const top = i * (TILE_SIZE + TILE_MARGIN) + OUTER_MARGIN;
-
-      const color = responseToColor(response[j]);
-      context.fillStyle = color;
-      context.fillRect(left, top, TILE_SIZE, TILE_SIZE);
-
       const letter = guess[j].toLocaleUpperCase();
+      const color = responseToColor(response[j]);
+      const metrics = context.measureText(letter);
+      const width = metrics.actualBoundingBoxRight;
+      const height = metrics.actualBoundingBoxAscent;
+
+      const tile_left = j * (TILE_SIZE + TILE_MARGIN) + OUTER_MARGIN;
+      const tile_top = i * (TILE_SIZE + TILE_MARGIN) + OUTER_MARGIN;
+
+      const letter_left = tile_left + (TILE_SIZE - width) / 2;
+      const letter_bottom = tile_top + (TILE_SIZE + height) / 2;
+
+      context.fillStyle = color;
+      context.fillRect(tile_left, tile_top, TILE_SIZE, TILE_SIZE);
+
       context.fillStyle = "white";
-      context.fillText(letter, left + (TILE_SIZE * 0.5), top + (TILE_SIZE * 0.5));
+      context.fillText(letter, letter_left, letter_bottom);
     }
   }
 
