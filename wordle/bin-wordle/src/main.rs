@@ -20,23 +20,39 @@ use lib_wordle::{clubs::Clubs, letter_orders::LetterOrders, response::Response, 
 
 // Modes
 // =====
-// best_all        : For a set of standard guesses, show the how the best option for each cluster compares to the last guess.
-// best            : For a strategy tree and in-cluster word, show best choices after the strategy.
+const USAGE: &str = "Usage: wordle_v2 <mode> [--set <wordSet>]? <args>...
+ assess <strategyPath> <guessesIncludingAnswer>
+   ex: assess ../data/v12.txt CLINT SOARE ELATE PLATE
+   Assess play compared to a pre-planned strategy.
+   Shows how many answers were left, the best guesses, and how the actual next guess compared.
+   Simulates 10,000 games with the strategy for that answer to show expected turns to solve.
 
-// assess          : For a strategy and real game (last = answer), show possible answers and next guess vs. strategy vs. best option.
+ analyze <guessesWithOptionalResponses>
+   ex: analyze soare gbbby clint (SOARE with green, black, black, black, yellow, then show all possible responses for CLINT...)
+   Shows remaining possible answers and the best next guesses.
+   If some responses are omitted, will show all possible answers for that guess.
+   If all responses are omitted, will show all of the outcomes for the guesses and the cluster of answers for each.
 
-// simulate        : Simulate games using a strategy tree file. Can run for a specific answer or cluster only to check average turns for specific games.
-// build           : Generate a strategy tree file given the strategy name and initial guesses.
+ build <strategy> <startingGuesses>
+  Generate a strategy tree file given the strategy name and initial guesses.
+  Strategies: 'standard', 'hybrid', 'best', 'first', 'v11'
+  
+ simulate <game_count> <strategyPath> [--games <answers_file_path> | --answer <single_answer> | --cluster <target_word> <at_turn>]? [--total]
+  Simulate games using a strategy tree file. Can run for a specific answer or cluster only to check average turns for specific games.
 
-// search          : Find the best starting words after specific starting guesses by considering all possible guesses and scoring them. (expensive)
+ best            : For a strategy tree and in-cluster word, show best choices after the strategy.
+ best_all        : For a set of standard guesses, show the how the best option for each cluster compares to the last guess.
+ stats           : For a set of guesses, compute cluster vector, distribution vector (random, ideal, and no-lose-min), average turns, failure rate.
+ explain_hybrid  : Show turns for perfect 'hybrid' play (after each guess, when there are 1-2 answers left, guess, otherwise, use next standard)
+ 
+ search          : Find the best starting words after specific starting guesses by considering all possible guesses and scoring them. (expensive)
 
-// analyze         : For a set of guesses (any subset with specific responses), show each distinct response set (cluster), the answer count per cluster, the answers, and the recommended next guess.
-// stats           : For a set of guesses, compute cluster vector, distribution vector (random, ideal, and no-lose-min), average turns, failure rate.
-// explain_hybrid  : Show turns for perfect 'hybrid' play (after each guess, when there are 1-2 answers left, guess, otherwise, use next standard)
-// score_answers   : Score answers by 'difficulty' (the sum of cluster size containing this answer across every possible guess)
-// score_guesses   : Score each allowed guess by the number of clusters created (number of different tile responses)
-// neighbors       : Show the most common neighbors for each letter (to help coming up with possible words when a particular letter is known)
-// answer_stats    : Show letter frequency, first letter frequency, and repeated letter odds.
+ score_answers   : Score answers by 'difficulty' (the sum of cluster size containing this answer across every possible guess)
+ score_guesses   : Score each allowed guess by the number of clusters created (number of different tile responses)
+ neighbors       : Show the most common neighbors for each letter (to help coming up with possible words when a particular letter is known)
+ answer_stats    : Show letter frequency, first letter frequency, and repeated letter odds.
+ ";
+
 // perf            : Performance test the primary 'score' function (find tiles for a guess and answer pair)
 
 // TODO:
@@ -49,7 +65,7 @@ fn main() {
     let mut args: &[&str] = &args[1..];
 
     if args.len() < 1 {
-        println!("Usage: wordle_v2 <mode> [--set <wordSet>]? <args>...");
+        println!("{}", USAGE);
         return;
     }
 

@@ -1,0 +1,3 @@
+#!/bin/bash
+
+./target/release/wordle assess --set 3158 ../data/v12.txt clint soare $@
