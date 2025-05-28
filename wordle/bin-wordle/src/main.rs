@@ -279,8 +279,8 @@ fn main() {
                 //search::score_cluster_count
                 //score::total_turns_ideal_map
                 //score::total_turns_pessimistic_map
-                //score::total_turns_predicted_map
-                rank::total_turns_random_map,
+                rank::total_turns_predicted_map,
+                //rank::total_turns_random_map,
                 cutoff,
                 cutoff_ratio
             );
