@@ -341,6 +341,12 @@ fn main() {
             println!("{}", single_use::print_letter_neighbors(&neighbors, NeighborSide::After));
         }
 
+        "consonant_pairs" => {
+            let pairs = single_use::consonant_pairs(&_answers);
+            println!("CONSONANT PAIRS");
+            println!("{}", single_use::print_consonant_pairs(&pairs));
+        }
+
         "answer_stats" => {
             let counts = single_use::letter_frequency(&_answers);
             single_use::letter_first_odds(&counts);

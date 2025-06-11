@@ -20,7 +20,7 @@
                     "kind": "bin"
                 }
             },
-            "args": ["search", "--set", "2309_all", "--ratio", "0.95", "2"],
+            "args": ["consonant_pairs"],
             "cwd": "${workspaceFolder}"
         },
         {

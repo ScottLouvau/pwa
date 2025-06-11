@@ -126,6 +126,49 @@ pub fn print_letter_neighbors(neighbors: &[LetterNeighbors; 26], side: NeighborS
     result
 }
 
+pub fn consonant_pairs(answers: &Vec<Word>) -> HashMap<(u8, u8), u16> {
+    let mut result = HashMap::new();
+
+    for answer in answers.iter() {
+        let mut last = None;
+
+        for letter in answer.iter_index() {
+            if let Some(l) = last {
+                if is_consonant(l) && is_consonant(letter) {
+                    *result.entry((l, letter)).or_insert(0) += 1;
+                }
+            }
+
+            last = Some(letter);
+        }
+    }
+
+    result
+}
+
+pub fn print_consonant_pairs(pairs: &HashMap<(u8, u8), u16>) -> String {
+    let mut pair_vec = Vec::new();
+
+    for pair in pairs.iter() {
+        pair_vec.push((*pair.1, i2c(pair.0.0), i2c(pair.0.1)));
+    }
+
+    // Sort by frequency descending
+    pair_vec.sort_by(|l, r| r.0.cmp(&l.0));
+
+    let mut result = String::new();
+    for pair in pair_vec.iter() {
+        result += &format!("{} | {}{}\n", pair.0, pair.1, pair.2); 
+    }
+
+    result
+}
+
+fn is_consonant(index: u8) -> bool {
+    // Not 'A', 'E', 'I', 'O', 'U'
+    index != 0 && index != 4 && index != 8 && index != 14 && index != 20
+}
+
 fn i2c(index: u8) -> char {
     (b'A' + index) as char
 }
@@ -320,5 +363,19 @@ mod tests {
         // Test repeat letter odds; 2/3 have a repeat
         let repeat_odds = super::repeat_letter_odds(&words);
         assert_eq!(repeat_odds, 2.0 / 3.0);
+    }
+
+    #[test]
+    fn is_consonant() {
+        assert_eq!(false, super::is_consonant(b'A' - b'A'));
+        assert_eq!(false, super::is_consonant(b'E' - b'A'));
+        assert_eq!(false, super::is_consonant(b'I' - b'A'));
+        assert_eq!(false, super::is_consonant(b'O' - b'A'));
+        assert_eq!(false, super::is_consonant(b'U' - b'A'));
+
+        assert_eq!(true, super::is_consonant(b'B' - b'A'));
+        assert_eq!(true, super::is_consonant(b'F' - b'A'));
+        assert_eq!(true, super::is_consonant(b'N' - b'A'));
+        assert_eq!(true, super::is_consonant(b'V' - b'A'));
     }
 }
