@@ -2,9 +2,15 @@
 
 wasm-pack build --target web
 
-mkdir -p data
-cp ../data/v12.txt ./data/
-cp ../data/2315/valid.txt ./data/valid.txt
-cp ../data/2315/answers.txt ./data/answers.txt
+cd ./web
 
-echo Run: npx serve
+mkdir -p data
+cp ../../data/v12.txt ./data/
+cp ../../data/2315/valid.txt ./data/valid.txt
+cp ../../data/2315/answers.txt ./data/answers.txt
+
+mkdir -p pkg
+cp "../pkg/wordle_wasm_bg.wasm" "./pkg/wordle_wasm_bg.wasm"
+cp "../pkg/wordle_wasm.js" "./pkg/wordle_wasm.js"
+
+echo Run: 'npx serve' in web folder

@@ -1,4 +1,5 @@
-bin-wordle-wasm/data/
+bin-wordle-wasm/web/data/
+bin-wordle-wasm/web/pkg/
 target/
 diy/data/
 diy/pkg/
