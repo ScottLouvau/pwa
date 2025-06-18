@@ -328,7 +328,9 @@ body {
   font-family: monospace;
   font-size: 80%;
   white-space: pre;
+
   overflow-y: auto;
+  max-height: 95vh;
 
   border: solid 1px hsl(204, 7%, 85%);
   border-radius: 0.4em;
