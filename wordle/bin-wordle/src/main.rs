@@ -40,6 +40,7 @@ const USAGE: &str = "Usage: wordle_v2 <mode> [--set <wordSet>]? <args>...
  simulate <game_count> <strategyPath> [--games <answers_file_path> | --answer <single_answer> | --cluster <target_word> <at_turn>]? [--total]
   Simulate games using a strategy tree file. Can run for a specific answer or cluster only to check average turns for specific games.
 
+ orders          : For a set of letter+position, show possible orders. (Uppercase green, lowercase yellow)
  best            : For a strategy tree and in-cluster word, show best choices after the strategy.
  best_all        : For a set of standard guesses, show the how the best option for each cluster compares to the last guess.
  stats           : For a set of guesses, compute cluster vector, distribution vector (random, ideal, and no-lose-min), average turns, failure rate.
