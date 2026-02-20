@@ -255,7 +255,7 @@ impl WordleTree {
                     result.push_str(&format!("(= {}, {})", length, self.answer_count));
                 },
                 WordleTreeIdentifier::Response(guess, response) => {
-                    result.push_str(&format!("({}, {})", response.to_knowns_string(&guess), self.answer_count));
+                    result.push_str(&format!("(> {}, {})", response.to_knowns_string(&guess), self.answer_count));
                 }
             }
 
@@ -318,9 +318,9 @@ impl WordleTree {
         let mut parent_stack: Vec<(usize, WordleTree)> = Vec::new();
         
         loop {
-            let (indent, tree) = WordleTree::parse_single(&mut parser)?;
+            let indent = parser.char_in_line - 1;
 
-            // Pop and add nodes which don't have a smaller indent than this node
+            // Parents with a deeper indent than this line are done.
             let mut last = None;
             while let Some((p_indent, mut parent)) = parent_stack.pop() {
                 if let Some((_, leaf)) = last {
@@ -331,10 +331,19 @@ impl WordleTree {
                 if p_indent < indent { break; }
             }
 
-            // Put the last removed node back
+            let mut last_guess = None;
             if let Some((p_indent, leaf)) = last {
+                // Retrieve the specific guess just before the new node
+                if let WordleGuess::Specific(word) = leaf.next_guess {
+                    last_guess = Some(word);
+                }
+
+                // Put the last removed node back (the parent of the current line node)
                 parent_stack.push((p_indent, leaf));
             }
+
+            // Parse the new node
+            let tree = WordleTree::parse_single(&mut parser, last_guess)?;
             
             // Add the newly parsed node
             parent_stack.push((indent, tree));
@@ -357,10 +366,9 @@ impl WordleTree {
     }
 
     /// Parse a single WordleTree node from the current line of text being parsed
-    pub fn parse_single(parser: &mut Parser) -> Result<(usize, WordleTree), String> {
+    pub fn parse_single(parser: &mut Parser, last_guess: Option<Word>) -> Result<WordleTree, String> {
         // ex: 43 (foyer, 8) -> rover  [2, 1, 1 .. +1 [8] ∑14]  {foyer, hover, joker, offer, roger, rover, rower, wooer}
         let mut result = WordleTree::new_sentinel();
-        let indent = parser.char_in_line - 1;
 
         // Outer Total Turns?
         if let Ok(outer_total_turns) = parser.as_f64() {
@@ -378,6 +386,13 @@ impl WordleTree {
             if parser.current == "=" {
                 parser.next()?;
                 result.identifier = WordleTreeIdentifier::EqualsLength(parser.as_usize()?);
+            } else if parser.current == ">" {
+                parser.next()?;
+                if let Some(last_guess) = last_guess {
+                    result.identifier = WordleTreeIdentifier::Response(last_guess, parser.as_response()?);
+                } else {
+                    return Err(parser.error("Response node found without known specific previous guess."));
+                }
             } else if let Some(word) = parser.as_word()? {
                 result.identifier = WordleTreeIdentifier::Cluster(word);
             } else {
@@ -444,7 +459,7 @@ impl WordleTree {
         
         // Verify nothing else is on this line
         if parser.next().is_err() {
-            Ok((indent, result))
+            Ok(result)
         } else {
             Err(parser.error("Unexpected content on line after end of WordleTree"))
         }
@@ -623,11 +638,10 @@ mod tests {
     }
 
     #[test]
-    fn test_parsing() {
+    fn test_parsing_single() {
         // Small cluster with everything. Verify complete cluster vector loaded. Verify answer count from answers supercedes from identifier.
         let mut parser = Parser::new("    4 (fried, 4) -> fries  [10, 4]  {fried, fries, frisk}".lines());
-        let (indent, tree) = WordleTree::parse_single(&mut parser).unwrap();
-        assert_eq!(indent, 4);
+        let tree = WordleTree::parse_single(&mut parser, None).unwrap();
         assert_eq!(tree.outer_total_turns, 4.0);
         assert_eq!(tree.identifier, WordleTreeIdentifier::Cluster(w("fried")));
         assert_eq!(tree.answer_count, 3);
@@ -638,8 +652,7 @@ mod tests {
         // Implicit identifier
         let expected = WordleTree::new_leaf(vec![w("fried"), w("fries"), w("frisk")], 15.0);
         let mut parser = Parser::new("        15 {fried, fries, frisk}".lines());
-        let (indent, tree) = WordleTree::parse_single(&mut parser).unwrap();
-        assert_eq!(indent, 8);
+        let tree = WordleTree::parse_single(&mut parser, None).unwrap();
         assert_eq!(tree.outer_total_turns, expected.outer_total_turns);
         assert_eq!(tree.identifier, expected.identifier);
         assert_eq!(tree.answer_count, expected.answer_count);
@@ -649,8 +662,7 @@ mod tests {
 
         // Any cluster, summarized cluster vector. Verify cluster vector left out when summarized in text
         let mut parser = Parser::new("        47.1 (*, 6) -> *  [1, 2, 3, 4, 5 .. +64 ^128 ∑79] ".lines());
-        let (indent, tree) = WordleTree::parse_single(&mut parser).unwrap();
-        assert_eq!(indent, 8);
+        let tree = WordleTree::parse_single(&mut parser, None).unwrap();
         assert_eq!(tree.outer_total_turns, 47.1);
         assert_eq!(tree.identifier, WordleTreeIdentifier::Any);
         assert_eq!(tree.answer_count, 6);
@@ -658,15 +670,38 @@ mod tests {
         assert_eq!(tree.cluster_vector, None);
         assert_eq!(tree.answers, None);
 
+        // Response cluster
+        let mut parser = Parser::new("    61 (> .O.re, 12) -> mawky".lines());
+        let tree = WordleTree::parse_single(&mut parser, Some(w("soare"))).unwrap();
+        assert_eq!(tree.outer_total_turns, 61.0);
+        assert_eq!(tree.identifier, WordleTreeIdentifier::Response(w("soare"), Response::from_str("bGbyy").unwrap()));
+        assert_eq!(tree.answer_count, 12);
+        assert_eq!(tree.next_guess, WordleGuess::Specific(w("mawky")));
+
         // Equals Length cluster, no CV, no answers
         let mut parser = Parser::new("        48 (= 1, 12) -> *".lines());
-        let (indent, tree) = WordleTree::parse_single(&mut parser).unwrap();
-        assert_eq!(indent, 8);
+        let tree = WordleTree::parse_single(&mut parser, None).unwrap();
         assert_eq!(tree.outer_total_turns, 48.0);
         assert_eq!(tree.identifier, WordleTreeIdentifier::EqualsLength(1));
         assert_eq!(tree.answer_count, 12);
         assert_eq!(tree.next_guess, WordleGuess::Random);
         assert_eq!(tree.cluster_vector, None);
         assert_eq!(tree.answers, None);
+    }
+
+    #[test]
+    fn test_parsing_tree() {
+        let text = 
+r#"8448  (*, 2315)   -> clint
+    8181  (*, 2314)   -> soare
+        7282  (*, 767)    -> *
+        114   (> ..are, 25) -> gybed
+        63    (> .O.re, 14) -> mawky
+"#;
+
+        let tree = WordleTree::parse(text.lines()).unwrap();
+
+        let output = tree.to_string();
+        assert_eq!(output, text);
     }
 }
