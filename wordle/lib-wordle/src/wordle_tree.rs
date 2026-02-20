@@ -48,7 +48,8 @@ pub enum WordleGuess {
 pub enum WordleTreeIdentifier {
     Any,                            // Applies to all games at the given turn
     EqualsLength(usize),            // Applies when the number of remaining possible answers matches (usize)
-    Cluster(Word)                   // Applies when the alphabetically first remaining possible answer is (Word)
+    Cluster(Word),                  // Applies when the alphabetically first remaining possible answer is (Word)
+    Response(Word, Response)        // Applies when the last guess has the given response
 }
 
 impl WordleTreeIdentifier {
@@ -60,11 +61,12 @@ impl WordleTreeIdentifier {
     }
 
     /// Return whether this identifier is a match for the given cluster.
-    pub fn matches(&self, cluster: &Vec<Word>) -> bool {
+    pub fn matches(&self, last_guess: Option<Word>, last_response: Option<Response>, cluster: &Vec<Word>) -> bool {
         match self {
             WordleTreeIdentifier::Any => true,
             WordleTreeIdentifier::EqualsLength(length) => cluster.len() == *length,
-            WordleTreeIdentifier::Cluster(cluster_word) => cluster.first().map(|w| w == cluster_word).unwrap_or(false)
+            WordleTreeIdentifier::Cluster(cluster_word) => cluster.first().map(|w| w == cluster_word).unwrap_or(false),
+            WordleTreeIdentifier::Response(guess, response) => last_guess.is_some_and(|g| g == *guess) && last_response.is_some_and(|r| r == *response),
         }
     }
 
@@ -80,7 +82,8 @@ impl std::fmt::Display for WordleTreeIdentifier {
         match self {
             WordleTreeIdentifier::Any => { return f.write_str("*"); },
             WordleTreeIdentifier::EqualsLength(l) => { return f.write_str(&format!("= {l}")); },
-            WordleTreeIdentifier::Cluster(word) => { return f.write_str(&word.to_string()); }
+            WordleTreeIdentifier::Cluster(word) => { return f.write_str(&word.to_string()); },
+            WordleTreeIdentifier::Response(guess, response) => { return f.write_str(&response.to_knowns_string(guess)); }
         }
     }
 }
@@ -250,6 +253,9 @@ impl WordleTree {
                 },
                 WordleTreeIdentifier::EqualsLength(length) => {
                     result.push_str(&format!("(= {}, {})", length, self.answer_count));
+                },
+                WordleTreeIdentifier::Response(guess, response) => {
+                    result.push_str(&format!("({}, {})", response.to_knowns_string(&guess), self.answer_count));
                 }
             }
 
@@ -591,18 +597,29 @@ mod tests {
         assert_eq!(WordleTreeIdentifier::Cluster(w("match")).is_more_specific(&WordleTreeIdentifier::EqualsLength(10)), true);
 
         // matches()
+        let guess = None;
+        let response = None;
         let cluster = vec![w("fatal"), w("tally"), w("waltz")];
 
         // Any matches any cluster
-        assert!(WordleTreeIdentifier::Any.matches(&cluster));
+        assert!(WordleTreeIdentifier::Any.matches(guess, response, &cluster));
 
         // EqualsLength matches clusters of the same length
-        assert!(WordleTreeIdentifier::EqualsLength(3).matches(&cluster));
-        assert!(!WordleTreeIdentifier::EqualsLength(2).matches(&cluster));
+        assert!(WordleTreeIdentifier::EqualsLength(3).matches(guess, response, &cluster));
+        assert!(!WordleTreeIdentifier::EqualsLength(2).matches(guess, response, &cluster));
 
         // Cluster matches only the cluster with the same first word
-        assert!(WordleTreeIdentifier::Cluster(w("fatal")).matches(&cluster));
-        assert!(!WordleTreeIdentifier::Cluster(w("tally")).matches(&cluster));
+        assert!(WordleTreeIdentifier::Cluster(w("fatal")).matches(guess, response, &cluster));
+        assert!(!WordleTreeIdentifier::Cluster(w("tally")).matches(guess, response, &cluster));
+
+        let guess = w("soare");
+        let response = Response::score(guess, cluster[0]);
+
+        assert!(WordleTreeIdentifier::Response(guess, response).matches(Some(guess), Some(response), &cluster));        // Both Match
+        assert!(!WordleTreeIdentifier::Response(guess, response).matches(Some(guess), None, &cluster));                 // No response
+        assert!(!WordleTreeIdentifier::Response(guess, response).matches(None, Some(response), &cluster));              // No guess
+        assert!(!WordleTreeIdentifier::Response(guess, response).matches(Some(w("waltz")), Some(response), &cluster));  // Different guess, same response
+        assert!(!WordleTreeIdentifier::Response(guess, response).matches(Some(guess), Some(Response::new(0)), &cluster));  // Same guess, different response
     }
 
     #[test]
