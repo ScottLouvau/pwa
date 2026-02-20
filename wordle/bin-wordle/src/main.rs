@@ -86,8 +86,11 @@ fn main() {
         }
     }
 
-    let _answers = Word::parse_file(&Path::new(&format!("../data/{set}/answers.txt")));
+    let mut _answers = Word::parse_file(&Path::new(&format!("../data/{set}/answers.txt")));
     let mut _valid = Word::parse_file(&Path::new(&format!("../data/{set}/valid.txt")));
+
+    // Note: Answers must be sorted for tree identifiers to be correct
+    _answers.sort();
 
     let start = Instant::now();
 
@@ -184,7 +187,10 @@ fn main() {
                     let at_turn = args[2].parse::<usize>().unwrap();
                     args = &args[3..];
 
-                    game_answers = Some(player.cluster(target_word, &_answers, at_turn));
+                    let mut cluster = player.cluster(target_word, &_answers, at_turn);
+                    cluster.sort();
+                    game_answers = Some(cluster);
+
                     player.clear_play_stats();
                 } else if args[0] == "--total" {
                     show_average_turns = false;
@@ -204,7 +210,8 @@ fn main() {
 
             let mut options = WordleTreeToStringOptions::default();
             options.show_average_turns = show_average_turns;
-            options.show_zero_turn_paths = false;
+            options.show_zero_turn_paths = true;
+            options.always_show_identifiers = true;
             println!();
             println!("{}", player.to_string(game_answers.len(), &options));
 

@@ -74,6 +74,18 @@ impl WordleTreeIdentifier {
     }
 }
 
+
+impl std::fmt::Display for WordleTreeIdentifier {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            WordleTreeIdentifier::Any => { return f.write_str("*"); },
+            WordleTreeIdentifier::EqualsLength(l) => { return f.write_str(&format!("= {l}")); },
+            WordleTreeIdentifier::Cluster(word) => { return f.write_str(&word.to_string()); }
+        }
+    }
+}
+
+
 pub struct WordleTreeToStringOptions {
     pub show_average_turns: bool,
     pub show_cluster_vectors: bool,
