@@ -39,7 +39,7 @@ impl TreePlayer<'_> {
     }
 
     /// Before a turn, use the current situation (answers_left) to figure out which node in the tree applies to this game.
-    fn next_for_game(&mut self, guesses: &Vec<Word>, turn: usize, answers_left: &Vec<Word>) {
+    fn next_for_game(&mut self, _guesses: &Vec<Word>, turn: usize, answers_left: &Vec<Word>) {
         // If a new game has started, mark down total turns until win in the previous one
         if turn <= 1 {
             self.current = Some(&self.tree);
@@ -54,14 +54,19 @@ impl TreePlayer<'_> {
             return;
         }
 
-        let last_guess = guesses.get(turn - 1).cloned();
+        let mut last_guess = None;
+        if let Some(tree) = self.current {
+            if let WordleGuess::Specific(word) = tree.next_guess {
+                last_guess = Some(word);
+            }
+        }
+        
         let mut last_response = None; 
         if let Some(guess) = last_guess {
             if let Some(first_answer) = answers_left.get(0) { 
                 last_response = Some(Response::score(guess, *first_answer));
             }
         }
-
 
         if let Some(c) = self.current {
             // Look for the most specific matching child (Cluster > Length > Any)
@@ -70,6 +75,7 @@ impl TreePlayer<'_> {
             if let Some(subtree) = &c.subtree {
                 for (i, child) in subtree.iter().enumerate() {
                     if child.identifier.matches(last_guess, last_response, answers_left) {
+                        //let _child_id = child.identifier.to_string();
                         let can_stop = child.identifier.is_cluster();
 
                         if let Some(b) = best {

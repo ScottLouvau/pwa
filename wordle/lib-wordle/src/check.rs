@@ -76,6 +76,8 @@ pub fn simulate_single(answers: &Vec<Word>, valid: &Vec<Word>, answer: Word, gam
     let mut from_answers = answers.clone();
     
     while let Some(guess) = strategy(valid, from_turn, &from_answers) {
+        //let _guess_text = guess.to_string();
+
         if guess == answer {
             from_answers.clear();
             break;

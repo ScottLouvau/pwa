@@ -48,14 +48,15 @@ pub enum WordleGuess {
 pub enum WordleTreeIdentifier {
     Any,                            // Applies to all games at the given turn
     EqualsLength(usize),            // Applies when the number of remaining possible answers matches (usize)
+    Response(Word, Response),       // Applies when the last guess has the given response    
     Cluster(Word),                  // Applies when the alphabetically first remaining possible answer is (Word)
-    Response(Word, Response)        // Applies when the last guess has the given response
 }
 
 impl WordleTreeIdentifier {
     pub fn is_cluster(&self) -> bool {
         match self {
             WordleTreeIdentifier::Cluster(_) => true,
+            WordleTreeIdentifier::Response(_, _) => true,
             _ => false
         }
     }
@@ -70,7 +71,7 @@ impl WordleTreeIdentifier {
         }
     }
 
-    /// Cluster > EqualsLength > Any; same as sort order.
+    /// Response > Cluster > EqualsLength > Any; same as sort order.
     pub fn is_more_specific(&self, other: &WordleTreeIdentifier) -> bool {
         self > other
     }
@@ -389,6 +390,7 @@ impl WordleTree {
             } else if parser.current == ">" {
                 parser.next()?;
                 if let Some(last_guess) = last_guess {
+                    //let _text = last_guess.to_string();
                     result.identifier = WordleTreeIdentifier::Response(last_guess, parser.as_response()?);
                 } else {
                     return Err(parser.error("Response node found without known specific previous guess."));
@@ -699,9 +701,14 @@ r#"8448  (*, 2315)   -> clint
         63    (> .O.re, 14) -> mawky
 "#;
 
-        let tree = WordleTree::parse(text.lines()).unwrap();
+        let mut tree = WordleTree::parse(text.lines()).unwrap();
 
         let output = tree.to_string();
         assert_eq!(output, text);
+
+        let soare = tree.take_first_child().unwrap();
+        let children = soare.subtree.unwrap();
+        let gybed = children.get(1).unwrap();
+        assert_eq!(gybed.identifier, WordleTreeIdentifier::Response(w("soare"), Response::from_knowns_str("..are").unwrap()));
     }
 }
