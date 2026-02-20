@@ -44,6 +44,35 @@ impl Response {
             None 
         }
     }
+
+    /// Convert knowns string to a Response
+    pub fn from_knowns_str(text: &str) -> Option<Response> { 
+        let mut value = 0;
+        let mut count = 0;
+
+        for c in text.chars() {
+            count += 1;
+            value = value << 2;
+
+            if c.is_alphabetic() {
+                if c.is_ascii_uppercase() {
+                    value += Tile::Green as u16;
+                } else {
+                    value += Tile::Yellow as u16;
+                }
+            } else if c == '.' || c == '_' {
+                value += Tile::Black as u16;
+            } else {
+                return None;
+            }
+        }
+
+        if count == 5 { 
+            Some(Response { value }) 
+        } else { 
+            None 
+        }
+    }
     
     /// Iterator over the Tiles in this Response
     pub fn iter(&self) -> ResponseIterator {
@@ -306,6 +335,12 @@ mod tests {
         // to_knowns_string
         assert_eq!(one.to_knowns_string(&w(&"soare")), "So.re");
         assert_eq!(two.to_knowns_string(&w(&"crane")), "CRANE");
+
+        // from_knowns_str
+        assert_eq!(Response::from_knowns_str(&one.to_knowns_string(&w(&"soare"))).unwrap(), one);
+        assert_eq!(Response::from_knowns_str(&two.to_knowns_string(&w(&"soare"))).unwrap(), two);
+        assert_eq!(Response::from_knowns_str(".O.r.").unwrap(), r("bGbyb"));
+        assert_eq!(Response::from_knowns_str("___rE").unwrap(), r("bbbyG"));
 
         let zero = r("⬛⬛⬛⬛⬛");
         assert_eq!(zero.known_count(), 0u8);

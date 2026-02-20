@@ -1,5 +1,5 @@
 use std::{iter::Peekable, str::{Chars, Lines}};
-use crate::word::Word;
+use crate::{response::Response, word::Word};
 
 pub struct Parser<'a> {
     pub line_number: usize,
@@ -81,6 +81,14 @@ impl Parser<'_> {
         // Capture and return this token
         self.current = result;
         Ok(&self.current)
+    }
+
+    pub fn as_response(&self) -> Result<Response, String> {
+        if let Some(response) = Response::from_knowns_str(&self.current) {
+            Ok(response)
+        } else {
+            Err(self.error("Not a valid response after '>'"))
+        }
     }
 
     pub fn as_word(&self) -> Result<Option<Word>, String> {
