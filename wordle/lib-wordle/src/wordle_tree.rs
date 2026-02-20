@@ -91,17 +91,19 @@ impl std::fmt::Display for WordleTreeIdentifier {
 
 
 pub struct WordleTreeToStringOptions {
-    pub show_average_turns: bool,
-    pub show_cluster_vectors: bool,
-    pub show_answers: bool,
-    pub always_show_identifiers: bool,
+    pub show_original_turns: bool,          // True to show the original turns expected from the parsed strategy
+    pub show_average_turns: bool,           // True to show average turns per game within node; false to show total per "pass" through all answers
+    pub show_cluster_vectors: bool,         // Whether to show cluster vector for the node, if present
+    pub show_answers: bool,                 // Whether to show each specific answer, if few enough
+    pub always_show_identifiers: bool,      // True to show identifier even if there are few enough answers to show all of them
 
-    pub show_zero_turn_paths: bool,
+    pub show_zero_turn_paths: bool,         // False to suppress paths which weren't encountered at all in the simulation
 }
 
 impl WordleTreeToStringOptions {
     pub fn default() -> WordleTreeToStringOptions {
         WordleTreeToStringOptions { 
+            show_original_turns: true,
             show_average_turns: false, 
             show_cluster_vectors: true, 
             show_answers: true, 
@@ -232,7 +234,7 @@ impl WordleTree {
         let start_length = result.len();
 
         // Total or Average Turns
-        if self.outer_total_turns != 0.0 {
+        if self.outer_total_turns != 0.0 && options.show_original_turns {
             result.push_str(&write_turns(self.outer_total_turns, self.answer_count as f64, options.show_average_turns));
 
             // Align at 5

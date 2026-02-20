@@ -212,6 +212,7 @@ fn main() {
             options.show_average_turns = show_average_turns;
             options.show_zero_turn_paths = true;
             options.always_show_identifiers = true;
+            options.show_original_turns = false;
             println!();
             println!("{}", player.to_string(game_answers.len(), &options));
 
