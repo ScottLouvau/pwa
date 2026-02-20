@@ -172,11 +172,17 @@ impl Clubs<'_> {
 
     pub fn count_best_turns_after(&self, within: BitVectorSlice, next_guess: Word, choices: &mut HashMap<BitVectorSlice, (Word, usize)>) -> usize {
         // One per answer left for next_guess itself being guessed
-        let mut best_turns = within.count() as usize;
+        let outer_count = within.count() as usize;
+        let mut best_turns = outer_count;
 
         // Plus the remaining turns per sub-cluster
         self.for_each_cluster(within, next_guess, &mut |_, subcluster| {
-            best_turns += self.count_best_turns(subcluster, choices);
+            if subcluster == within {
+                // Don't recurse if the guess leaves all words in the same subcluster
+                best_turns += outer_count * outer_count;
+            } else {
+                best_turns += self.count_best_turns(subcluster, choices);
+            }
         });
 
         best_turns

@@ -21,12 +21,18 @@ pub fn recommended_strategy(guesses: &Vec<Word>, next_guess: Word, answers: &Vec
     let mut result = String::new();
     for (responses, cluster_words) in clusters.iter() {
         if cluster_words.len() < 4 { continue; }
-        let next = if responses.known_count() < 3 { Some(next_guess) } else { None };
+
+        let first = cluster_words[0];
+        let count = cluster_words.len();
+
+        if count > 63 { 
+            result += &format!("SKIP {first}, {count}\n");
+            continue;
+        }
+
+        let next = Some(next_guess); // if responses.known_count() < 3 { Some(next_guess) } else { None };
 
         if let Some(choice) = run_best_turns(cluster_words, next, &valid) {
-            let first = cluster_words[0];
-            let count = cluster_words.len();
-
             result += &format!("{} ({first}, {count})\n    -> {choice}\n", responses.to_knowns(guesses));
 
             // for word in cluster_words {
