@@ -455,15 +455,15 @@ mod tests {
         assert_eq!(result,
 "=== CRASH ===
 1) crane: 🟩🟩🟩⬛⬛ -> 2
-  * crack  2.50  [1]
-  * crash  2.50  [1]
+    * crack  2.50  [1]
+    * crash  2.50  [1]
 
-  > spilt  3.00  [2]
+    > spilt  3.00  [2]
 
 2) spilt: 🟨⬛⬛⬛⬛ -> 1
-  > crash  3.00  
+   >* crash  3.00  
 
-  s dumbo  4.00  [1]
+    s dumbo  4.00  [1]
 
 3) crash: 🟩🟩🟩🟩🟩 -> 1
 ");
@@ -475,26 +475,26 @@ mod tests {
         assert_eq!(result,
 "=== YYYYY ===
 1) crane: ⬛⬛⬛⬛⬛ -> 4
-  * wwwww  3.50  [0, 0, 1]
-  * xxxxx  3.50  [0, 0, 1]
-  * yyyyy  3.50  [0, 0, 1]
-  * zzzzz  3.50  [0, 0, 1]
+    * wwwww  3.50  [0, 0, 1]
+    * xxxxx  3.50  [0, 0, 1]
+    * yyyyy  3.50  [0, 0, 1]
+    * zzzzz  3.50  [0, 0, 1]
 
-  x waxys  3.00  [4]
-  > spilt  4.50  [0, 0, 0, 1]
+    x waxys  3.00  [4]
+    > spilt  4.50  [0, 0, 0, 1]
 
 2) spilt: ⬛⬛⬛⬛⬛ -> 4
-  * wwwww  4.50  [0, 0, 1]
-  * xxxxx  4.50  [0, 0, 1]
-  * yyyyy  4.50  [0, 0, 1]
-  * zzzzz  4.50  [0, 0, 1]
+    * wwwww  4.50  [0, 0, 1]
+    * xxxxx  4.50  [0, 0, 1]
+    * yyyyy  4.50  [0, 0, 1]
+    * zzzzz  4.50  [0, 0, 1]
 
-  x waxys  4.00  [4]
-  s dumbo  5.50  [0, 0, 0, 1]
-  > waxys  4.00  [4]
+    x waxys  4.00  [4]
+    s dumbo  5.50  [0, 0, 0, 1]
+    > waxys  4.00  [4]
 
 3) waxys: ⬛⬛⬛🟩⬛ -> 1
-  > yyyyy  4.00  
+   >* yyyyy  4.00  
 
 4) yyyyy: 🟩🟩🟩🟩🟩 -> 1
 ");
