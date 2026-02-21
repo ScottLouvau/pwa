@@ -221,23 +221,25 @@ pub fn choose_best_predicted(guesses: &Vec<Word>, turn: usize, answers_left: &Ve
 }
 
 pub fn assess_and_simulate(guesses: Option<&str>, valid: &Vec<Word>, answers: &Vec<Word>, simulate_game_count: usize, mut player: TreePlayer) -> Result<String, String> {
+    let mut output = String::new();
+
     let guesses = guesses.ok_or("Must provide guesses")?;
     let guesses = wv_safe(&guesses)?;
     let answer = *guesses.last().ok_or("Must have one or more guesses")?;
+    let mut answers_to_use = answers.clone();
 
     if !answers.contains(&answer) {
-        return Err(format!("{answer} isn't a Wordle answer!"));
+        answers_to_use.push(answer);
+        output += &format!("WARNING: {answer} isn't an original Wordle answer.\n\n");
     }
 
-    let mut output = String::new();
-    output += &assess(answer, guesses, valid, answers.clone(), &mut player);
-
     let simulate_answers = vec![answer];
-    let turns = simulate(&answers, &simulate_answers, &Vec::new(), simulate_game_count, &mut |g, t, a| player.choose(g, t, a), false);
+    let turns = simulate(&answers_to_use, &simulate_answers, &Vec::new(), simulate_game_count, &mut |g, t, a| player.choose(g, t, a), false);
+
+    output += &assess(answer, guesses, valid, answers_to_use, &mut player);
 
     output += "\n\n";
     output += &format!("=> {turns:.3} avg turns ({answer} x{simulate_game_count})\n\n");
-
     output += "* = best in-cluster guesses\n";
     output += "x = best out-of-cluster guess\n";
     output += "s = strategy guess\n";
@@ -293,9 +295,12 @@ pub fn assess(answer: Word, guesses: Vec<Word>, valid: &Vec<Word>, mut answers_l
         // If there are few enough answers left, list and analyze them
         if let Some(next_guess) = guesses.get(i + 1) {
             let mut need_newline = false;
-            let mut next_guess_shown = false;
+            let mut actual_guess_shown = false;
+            let mut strategy_guess_shown = false;
 
-            if count_left < 30 {
+            let strategy_next = player.choose(&guesses, turns + 1, &answers_left);
+
+            if count_left < 40 {
                 // Compute average turns remaining for each answer remaining answer (best last)
                 let ranked = rank_all_cluster(&answers_left, &answers_left);
                 let best_score = ranked.last().unwrap().0;
@@ -307,10 +312,22 @@ pub fn assess(answer: Word, guesses: Vec<Word>, valid: &Vec<Word>, mut answers_l
                 for (score, choice, cv) in ranked.iter() {
                     // * for ties for best option
                     // > for actual next guess
-                    let mut mark = if *score == best_score { "*" } else { " " };
-                    if next_guess == choice { mark = ">"; next_guess_shown = true; }
+                    let mut mark = String::new();                    
+                    if next_guess == choice { 
+                        mark.push('>'); 
+                        actual_guess_shown = true; 
+                    }
+                    
+                    if let Some(next_standard) = strategy_next {
+                        if next_standard == *choice {
+                            mark.push('s');
+                            strategy_guess_shown = true;
+                        }
+                    }
 
-                    result += &format!("  {} {}  {:.2}  {}\n", mark, choice, (turns as f64) + 1.0 + score, cv.to_string());
+                    if *score == best_score { mark.push('*'); }
+
+                    result += &format!("{:>5} {}  {:.2}  {}\n", mark, choice, (turns as f64) + 1.0 + score, cv.to_string());
                 }
 
                 // If no in-cluster guess is ideal, also show the best possible guess from all valid words
@@ -320,26 +337,27 @@ pub fn assess(answer: Word, guesses: Vec<Word>, valid: &Vec<Word>, mut answers_l
                     let (score, choice, cv) = best(valid, &answers_left);
                     if score < best_score {
                         if need_newline { need_newline = false; result += "\n"; }
-                        result += &format!("  x {}  {:.2}  {}\n", choice, (turns as f64) + 1.0 + score, &cv.to_string());
+                        result += &format!("{:>5} {}  {:.2}  {}\n", "x", choice, (turns as f64) + 1.0 + score, &cv.to_string());
                     }
                 }
             }
 
             // If the next standard guess wasn't used, also show the outcome for it
-            let strategy_next = player.choose(&guesses, turns + 1, &answers_left);
-            if let Some(next_standard) = strategy_next {
-                if next_standard != *next_guess {
-                    if need_newline { need_newline = false; result += "\n"; }
-                    let (score, choice, cv) = rank_cluster(next_standard, &answers_left);
-                    result += &format!("  s {}  {:.2}  {}\n", choice, (turns as f64) + 1.0 + score, cv.to_string());
+            if strategy_guess_shown == false {
+                if let Some(next_standard) = strategy_next {
+                    if next_standard != *next_guess {
+                        if need_newline { need_newline = false; result += "\n"; }
+                        let (score, choice, cv) = rank_cluster(next_standard, &answers_left);
+                        result += &format!("{:>5} {}  {:.2}  {}\n", "s", choice, (turns as f64) + 1.0 + score, cv.to_string());
+                    }
                 }
             }
 
             // If the next guess wasn't shown, also show the outcome for it
-            if !next_guess_shown {
+            if !actual_guess_shown {
                 if need_newline { /*need_newline = false;*/ result += "\n"; }
                 let (score, choice, cv) = rank_cluster(*next_guess, &answers_left);
-                result += &format!("  > {}  {:.2}  {}\n", choice, (turns as f64) + 1.0 + score, cv.to_string());
+                result += &format!("{:>5} {}  {:.2}  {}\n", ">", choice, (turns as f64) + 1.0 + score, cv.to_string());
             }
         }
     }

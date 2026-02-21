@@ -9,7 +9,7 @@ use lib_wordle::{check, word::Word};
 
 static ANSWERS: &str = std::include_str!("../../data/2315/answers.txt");
 static VALID: &str = std::include_str!("../../data/2315/valid.txt");
-static STRATEGY: &str = std::include_str!("../../data/v12.txt");
+static STRATEGY: &str = std::include_str!("../../data/v13.txt");
 static INDEX: &str = std::include_str!("../index.html");
 
 struct AppState {
