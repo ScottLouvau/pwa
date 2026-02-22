@@ -1,67 +1,73 @@
-8300  (*, 2315)         -> clint
-    1759 (> ....., 435)    -> soare
-        114   (> ..are, 25)     -> gybed
+8241  (*, 2315)         -> clint
+    1733  (> ....., 435)    -> soare
+        112   (> ..are, 25)     -> gybed
+            36    (> ...E., 7)      -> perms  [5, 1]
         98.5  (> ...re, 23)     -> dumpy  [16, 0, 1, 1]
-        69    (> .O..., 16)     -> dough  [9, 1, 0, 0, 1]
+        69.4  (> .O..., 16)     -> goody  [5, 2, 2]
         62    (> ....., 15)     -> dumpy  [8, 3]
-        63.3  (> ..a.., 15)     -> dumpy  [10, 1, 1]
-        31.9  (> S..re, 14)     -> mawky  [5, 2, 0, 0, 1]
-        50 (> .oar., 12)     -> armor
+        62    (> ..a.., 15)     -> midgy  [11, 2]
+        62    (> .O.re, 14)     -> mawky  [5, 2, 0, 0, 1]
+            24    (> ....., 5)      -> rover  [4]
+        50    (> .oar., 12)     -> armor  [5, 3]
         33    (> .o.rE, 8)      -> paved  [6, 1]
         29    (> S.A.E, 7)      -> dumpy  [5, 1]
-        41 (bushy, 10)       -> hokum
-        35 (merge, 9)        -> merge
-    734 (> .l..., 189)    -> soare
-        62 (> .O..., 14)     -> dolly
+        41    (> s...., 10)     -> hokum  [8, 1]
+        35    (> ...rE, 9)      -> merge  [8]
+        55    (> .o.r., 13)     -> frump  [7, 3]
+        39    (> ..ArE, 9)      -> gived  [3, 3]
+    732   (> .l..., 189)    -> soare
+        60    (> .O..., 14)     -> dolly  [7, 1, 0, 1]
+            20    (> .OLLY, 4)      -> fight  [4]
         49    (> ..a.., 12)     -> dumpy  [10, 1]
-        49 (> ..a.e, 12)     -> legal
-        42 (> ..a.E, 10)     -> amble
-        36 (baler, 9)        -> relay
-        50 (belly, 12)       -> belly
-    314 (> ..i.., 86)     -> soare
-        43    (> ...re, 10)     -> paved  [7, 0, 1]
-        42    (> ....., 10)     -> dumpy  [7, 3]
-    703 (> ....t, 185)    -> soare
-        32 (broth, 8)        -> broth
-        38.3 (after, 9)        -> apeek
-        29 (batty, 7)        -> tabby
-        21    (> s.a.E, 5)      -> bumph  [3, 1]
-    2237  (*, 2314)         -> soare
-        2138  (*, 767)          -> *
-        73    (> .o.r., 13)     -> dumpy  [7, 3]
-        26    (> ..ArE, 9)      -> dumpy  [5, 0, 0, 1]
-    211 (> ..I.., 61)     -> drape
-    198 (> .li.., 54)     -> ailed
-    184 (> ...N., 50)     -> drape
-    168 (> ..in., 48)     -> rides
-    125 (> .l..t, 38)     -> taste
-    124 (> ..i.t, 35)     -> brash
-    113 (> ..IN., 32)     -> spewy
-    103 (> .l.n., 31)     -> morae
-    101 (> ..i.T, 29)     -> armed
-    81.6 (> c...t, 24)     -> burka
-    76 (> c..n., 23)     -> beach
-    75.1 (> .lI.., 22)     -> waged
-    68 (> cl..., 21)     -> lades
-    64 (> ..I.t, 20)     -> phare
-    64.9 (> ...NT, 18)     -> argus
-    54 (> ..I.T, 17)     -> wersh
-    49 (> c.i.., 16)     -> bemas
-    50 (> .L.N., 16)     -> beaks
-    47 (> CL..., 15)     -> dopas
-    46 (> .l..T, 15)     -> devas
-    43 (> .L..T, 14)     -> ables
-    39 (> ...Nt, 13)     -> kayos
-    34 (> c.i.t, 11)     -> hoped
-    30 (> .lin., 10)     -> annoy
-    30 (> c.I.., 10)     -> pouke
-    27 (> C.i.., 9)      -> cigar
-    24 (> ..INT, 8)      -> traps
-    23 (> .li.t, 8)      -> tilde
-    17 (> ..inT, 6)      -> inept
-    17 (> ..INt, 6)      -> thing
-    15 (> .LIN., 5)      -> blink
-    16 (> .lI.T, 5)      -> built
+        49    (> ..a.e, 12)     -> legal  [7, 2]
+        42    (> ..a.E, 10)     -> amble  [4, 1, 1]
+        36    (> ..are, 9)      -> relay  [6, 1]
+        50    (> ....e, 12)     -> belly  [5, 3]
+    312   (> ..i.., 86)     -> soare
+        42.4  (> ...re, 10)     -> rived  [7, 0, 1]
+        41    (> ....., 10)     -> fudgy  [8, 1]
+    702   (> ....t, 185)    -> soare
+        32    (> .o.r., 8)      -> turbo  [5, 1]
+        38    (> ..are, 9)      -> match  [5, 2]
+        29    (> ..a.., 7)      -> tabby  [2, 2]
+        21    (> s.a.E, 5)      -> pshaw  [3, 1]
+    125   (> ..i.t, 35)     -> soare
+        37.3 (> ....., 9)      -> width  [5, 0, 1]
+    2223  (*, 2314)         -> soare
+    211   (> ..I.., 61)     -> drape  [16, 14, 3, 2 .. ∑35]
+    192   (> .li.., 54)     -> ailed
+        33 (> .IL.., 8)      -> fowls  [6, 1]
+    176   (> ...N., 50)     -> drape
+        25 (> d...., 6)      -> wombs  [4, 1]
+    165   (> ..in., 48)     -> rides
+        20 (> .I..., 5)      -> korma  [5]
+    125   (> .l..t, 38)     -> taste
+    113   (> ..IN., 32)     -> greys  [7, 6, 3, 1]
+    103   (> .l.n., 31)     -> morae
+    101   (> ..i.T, 29)     -> armed
+    81.6  (> c...t, 24)     -> burka
+    75.9  (> c..n., 23)     -> beach
+    75.1  (> .lI.., 22)     -> waged
+    68    (> cl..., 21)     -> lades
+    64    (> ..I.t, 20)     -> phare
+    65    (> ...NT, 18)     -> argus
+    54    (> ..I.T, 17)     -> wersh
+    49    (> c.i.., 16)     -> bemas
+    50    (> .L.N., 16)     -> beaks
+    47    (> CL..., 15)     -> dopas
+    46    (> .l..T, 15)     -> devas
+    43    (> .L..T, 14)     -> ables
+    39    (> ...Nt, 13)     -> kayos
+    34    (> c.i.t, 11)     -> hoped
+    30    (> .lin., 10)     -> annoy
+    30    (> c.I.., 10)     -> pouke
+    27    (> C.i.., 9)      -> cigar
+    24    (> ..INT, 8)      -> traps
+    23    (> .li.t, 8)      -> tilde
+    17    (> ..inT, 6)      -> inept
+    17    (> ..INt, 6)      -> thing
+    15    (> .LIN., 5)      -> blink
+    16    (> .lI.T, 5)      -> built
     18    (filet, 6)        -> *
     18.8  (cabin, 6)        -> *
     14.8  (stick, 5)        -> *
@@ -69,7 +75,7 @@
     11.5  (flick, 4)        -> *
     12    (clang, 4)        -> *
     8.3   (blunt, 3)        -> *
-    8.4   (elfin, 3)        -> *
+    8.3   (elfin, 3)        -> *
     8.3   (antic, 3)        -> *
     9     (child, 3)        -> *
     8.3   (cleat, 3)        -> *
