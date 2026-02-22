@@ -334,10 +334,27 @@ pub fn assess(answer: Word, guesses: Vec<Word>, valid: &Vec<Word>, mut answers_l
                 // (An ideal in-cluster guess will have a "turns left" under 1.0; zero when it's the answer and one for everything else.)
                 // (An ideal out-of-cluster guess has a best turns left of 1.0, so if the in-cluster best is one, out-of-cluster won't be better.)
                 if best_score > 1.0 {
-                    let (score, choice, cv) = best(valid, &answers_left);
-                    if score < best_score {
+                    // Find one tie for best valid word.
+                    // let (score, choice, cv) = best(valid, &answers_left);
+                    // if score < best_score {
+                    //     if need_newline { need_newline = false; result += "\n"; }
+                    //     result += &format!("{:>5} {}  {:.2}  {}\n", "x", choice, (turns as f64) + 1.0 + score, &cv.to_string());
+                    // }
+
+                    // Show all ties for best valid word
+                    let valid_scored = rank_all_cluster(valid, &answers_left);
+                    let mut best_valid_score = None;
+
+                    for option in valid_scored.iter().rev() {
+                        if let Some(score) = best_valid_score {
+                            if option.0 - score > 0.01 { break; }
+                        } else {
+                            best_valid_score = Some(option.0);
+                            if option.0 >= best_score { break; }
+                        }
+
                         if need_newline { need_newline = false; result += "\n"; }
-                        result += &format!("{:>5} {}  {:.2}  {}\n", "x", choice, (turns as f64) + 1.0 + score, &cv.to_string());
+                        result += &format!("{:>5} {}  {:.2}  {}\n", "x", option.1, (turns as f64) + 1.0 + option.0, &option.2.to_string());
                     }
                 }
             }
@@ -401,9 +418,9 @@ fn rank_all_cluster(guess_options: &Vec<Word>, answers: &Vec<Word>) -> Vec<(f64,
     result
 }
 
-fn best(guess_options: &Vec<Word>, cluster: &Vec<Word>) -> (f64, Word, ClusterVector) {
-    rank_all_cluster(guess_options, cluster).last().unwrap().clone()
-}
+// fn best(guess_options: &Vec<Word>, cluster: &Vec<Word>) -> (f64, Word, ClusterVector) {
+//     rank_all_cluster(guess_options, cluster).last().unwrap().clone()
+// }
 
 #[cfg(test)]
 mod tests {
