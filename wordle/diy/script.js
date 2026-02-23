@@ -42,7 +42,7 @@ async function startup() {
   valid.push(...valid_text.split('\n'));
 
   // Retrieve strategy and prepare Wordle analyzer
-  strategy = await fetch('./data/v12.txt').then((res) => res.text());
+  strategy = await fetch('./data/v13.txt').then((res) => res.text());
   await init();
   analyzer = Wordle.new(valid_text, answer_text, strategy);
 
