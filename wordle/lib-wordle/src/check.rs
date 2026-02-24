@@ -295,9 +295,6 @@ pub fn assess(answer: Word, guesses: Vec<Word>, valid: &Vec<Word>, mut answers_l
         // If there are few enough answers left, list and analyze them
         if let Some(next_guess) = guesses.get(i + 1) {
             let mut need_newline = false;
-            let mut actual_guess_shown = false;
-            let mut strategy_guess_shown = false;
-
             let strategy_next = player.choose(&guesses, turns + 1, &answers_left);
 
             if count_left < 40 {
@@ -310,23 +307,8 @@ pub fn assess(answer: Word, guesses: Vec<Word>, valid: &Vec<Word>, mut answers_l
 
                 // Write all in-cluster words with expected total game turns if chosen.
                 for (score, choice, cv) in ranked.iter() {
-                    // * for ties for best option
-                    // > for actual next guess
-                    let mut mark = String::new();                    
-                    if next_guess == choice { 
-                        mark.push('>'); 
-                        actual_guess_shown = true; 
-                    }
-                    
-                    if let Some(next_standard) = strategy_next {
-                        if next_standard == *choice {
-                            mark.push('s');
-                            strategy_guess_shown = true;
-                        }
-                    }
-
+                    let mut mark = String::new();
                     if *score == best_score { mark.push('*'); }
-
                     result += &format!("{:>5} {}  {:.2}  {}\n", mark, choice, (turns as f64) + 1.0 + score, cv.to_string());
                 }
 
@@ -359,23 +341,17 @@ pub fn assess(answer: Word, guesses: Vec<Word>, valid: &Vec<Word>, mut answers_l
                 }
             }
 
-            // If the next standard guess wasn't used, also show the outcome for it
-            if strategy_guess_shown == false {
-                if let Some(next_standard) = strategy_next {
-                    if next_standard != *next_guess {
-                        if need_newline { need_newline = false; result += "\n"; }
-                        let (score, choice, cv) = rank_cluster(next_standard, &answers_left);
-                        result += &format!("{:>5} {}  {:.2}  {}\n", "s", choice, (turns as f64) + 1.0 + score, cv.to_string());
-                    }
-                }
+            // Show the outcome for the next strategy guess, if there is one
+            if let Some(next_standard) = strategy_next {
+                if need_newline { need_newline = false; result += "\n"; }
+                let (score, choice, cv) = rank_cluster(next_standard, &answers_left);
+                result += &format!("{:>5} {}  {:.2}  {}\n", "s", choice, (turns as f64) + 1.0 + score, cv.to_string());
             }
 
-            // If the next guess wasn't shown, also show the outcome for it
-            if !actual_guess_shown {
-                if need_newline { /*need_newline = false;*/ result += "\n"; }
-                let (score, choice, cv) = rank_cluster(*next_guess, &answers_left);
-                result += &format!("{:>5} {}  {:.2}  {}\n", ">", choice, (turns as f64) + 1.0 + score, cv.to_string());
-            }
+            // Show the outcome for the actual next guess made
+            if need_newline { /*need_newline = false;*/ result += "\n"; }
+            let (score, choice, cv) = rank_cluster(*next_guess, &answers_left);
+            result += &format!("{:>5} {}  {:.2}  {}\n", ">", choice, (turns as f64) + 1.0 + score, cv.to_string());
         }
     }
 
@@ -475,12 +451,14 @@ mod tests {
     * crack  2.50  [1]
     * crash  2.50  [1]
 
+    s spilt  3.00  [2]
     > spilt  3.00  [2]
 
 2) spilt: 🟨⬛⬛⬛⬛ -> 1
-   >* crash  3.00  
+    * crash  3.00  
 
     s dumbo  4.00  [1]
+    > crash  3.00  
 
 3) crash: 🟩🟩🟩🟩🟩 -> 1
 ");
@@ -498,6 +476,7 @@ mod tests {
     * zzzzz  3.50  [0, 0, 1]
 
     x waxys  3.00  [4]
+    s spilt  4.50  [0, 0, 0, 1]
     > spilt  4.50  [0, 0, 0, 1]
 
 2) spilt: ⬛⬛⬛⬛⬛ -> 4
@@ -511,7 +490,9 @@ mod tests {
     > waxys  4.00  [4]
 
 3) waxys: ⬛⬛⬛🟩⬛ -> 1
-   >* yyyyy  4.00  
+    * yyyyy  4.00  
+
+    > yyyyy  4.00  
 
 4) yyyyy: 🟩🟩🟩🟩🟩 -> 1
 ");
