@@ -460,6 +460,17 @@ function showStatistics() {
 
   overlay.addEventListener("click", closeOverlay);
   statistics.addEventListener("click", (e) => e.stopPropagation());
+  label.addEventListener("dblclick", resetStatistics);
+}
+
+function resetStatistics() {
+  const is_confirmed = confirm("Reset Statistics?");
+
+  if (is_confirmed) {
+    const record = [0, 0, 0, 0, 0, 0, 0];
+    localStorage.setItem("record", JSON.stringify(record));
+    alert("Statistics Reset");
+  }
 }
 
 function closeOverlay() {
