@@ -6,7 +6,7 @@ const CACHE_URLS = [
     "./",
     "./app.webmanifest",
     "./icon.svg",
-    "./data/v12.txt",
+    "./data/v13.txt",
     "./data/answers.txt",
     "./data/valid.txt",
     "./pkg/wordle_wasm_bg.wasm",

@@ -38,8 +38,9 @@
                     "kind": "bin"
                 }
             },
-            "args": [],
-            "cwd": "${workspaceFolder}"
+            "_args": ["simulate", "2", "../data/v13.txt", "--total"],
+            "args": ["assess", "../data/v13.txt", "clint", "soare", "dough", "dodgy"],
+            "cwd": "${workspaceFolder}/bin-wordle"
         },
         {
             "type": "lldb",

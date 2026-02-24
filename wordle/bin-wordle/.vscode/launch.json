@@ -20,7 +20,7 @@
                     "kind": "bin"
                 }
             },
-            "args": ["assess", "../data/v12.txt", "buzzy", "raise"],
+            "args": ["assess", "../data/v13.txt", "buzzy", "raise"],
             "cwd": "${workspaceFolder}"
         },
         {

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 mkdir -p data
-cp ../data/v12.txt ./data/
+cp ../data/v13.txt ./data/
 cp ../data/2315/valid.txt ./data/valid.txt
 cp ../data/2315/answers.txt ./data/answers.txt
 

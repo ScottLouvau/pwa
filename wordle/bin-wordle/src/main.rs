@@ -22,7 +22,7 @@ use lib_wordle::{clubs::Clubs, letter_orders::LetterOrders, response::Response, 
 // =====
 const USAGE: &str = "Usage: wordle_v2 <mode> [--set <wordSet>]? <args>...
  assess <strategyPath> <guessesIncludingAnswer>
-   ex: assess ../data/v12.txt CLINT SOARE ELATE PLATE
+   ex: assess ../data/v13.txt CLINT SOARE ELATE PLATE
    Assess play compared to a pre-planned strategy.
    Shows how many answers were left, the best guesses, and how the actual next guess compared.
    Simulates 10,000 games with the strategy for that answer to show expected turns to solve.

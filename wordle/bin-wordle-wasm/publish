@@ -7,7 +7,7 @@ wasm-pack build --target web
 mkdir -p $DEST/data
 cp "../data/2315/answers.txt" "$DEST/data/answers.txt"
 cp "../data/2315/valid.txt" "$DEST/data/valid.txt"
-cp "../data/v12.txt" "$DEST/data/v12.txt"
+cp "../data/v13.txt" "$DEST/data/v13.txt"
 
 mkdir -p $DEST/pkg
 cp "pkg/wordle_wasm_bg.wasm" "$DEST/pkg/wordle_wasm_bg.wasm"
