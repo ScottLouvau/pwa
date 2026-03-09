@@ -1,5 +1,4 @@
-AFTER CLINT
-===========
+clint
 CL...  >  pause
 cl...  >  leads
 c.i.t  >  hoped
@@ -9,10 +8,15 @@ c.I..  >  pukey
 c.i..  >  miser
 c..n.  >  beach
 c...t  >  harem
+.l...  >  salle
+          .al..  >  royal
+          ..LL.  >  defog
+          ..l.e  >  bever
 .lin.  >  annoy
 .li.t  >  tilde
 .lI..  >  wager
-.li..  >  ailed; .IL..  >  fowls
+.li..  >  ailed
+          .IL..  >  fowls
 .L.N.  >  beaks
 .l.n.  >  morae
 .L..T  >  ables
@@ -22,44 +26,41 @@ c...t  >  harem
 ..INT  >  tarps
 ..INt  >  thing
 ..inT  >  inept
-..IN.  >  greys
-..in.  >  rides; .I...  >  korma
+..IN.  >  greys (__ing, __ine)
+..in.  >  rides
+          .I...  >  korma
 ..I.T  >  wersh
 ..I.t  >  phare
-..i.T  >  armed; .....  >  gowfs
-..i.t  >  soare; .....  >  width
+..i.T  >  armed
+          .....  >  gowfs
+..i.t  >  soare
+          .....  >  width
 ..I..  >  drape
-...NT  >  shrug; ...u.  >  advew
+..i..  >  soare
+          ...re  >  rived
+          .....  >  fudgy
+...NT  >  shrug
+          ...u.  >  advew
 ...Nt  >  tokay
-...N.  >  drape; d....  >  wombs
-
-.l...  >  salle
-    .al..  >  royal
-    ..LL.  >  defog
-    ..l.e  >  bever
-
-If 3+ found, guess.
-Otherwise, SOARE.
-
-AFTER SOARE
-===========
-
-CLINT  SOARE 
-..i..  ...re  >  rived
-..i..  .....  >  fudgy
-..i.t  .....  >  width
-....t  s.a.E  >  pshaw
-
-.....  S.A.E  >  dumpy
-.....  s....  >  hokum
-.....  .oar.  >  armor
-.....  .O.re  >  mawky; ..... >  rover
-.....  .o.rE  >  paved
-.....  .o.r.  >  frump
-.....  .O...  >  goody
-.....  ..ArE  >  gived
-.....  ..are  >  gybed; ...E.  >  perms
-.....  ...rE  >  merge
-.....  ...re  >  dumpy
-.....  ..a..  >  midgy
-.....  .....  >  dumpy
+...N.  >  drape
+          d....  >  womb
+....t  >  soare
+          s.a.E  >  pshaw
+.....  > soare
+         S.A.E  >  dumpy
+         s....  >  hokum
+         .O.re  >  mawky
+                   ..... >  rover
+         .O...  >  goody
+         .oar.  >  armor
+         .o.rE  >  paved
+         .o.r.  >  frump
+         ..ArE  >  gived
+         ..are  >  gybed
+                   ...E.  >  perms
+         ..a..  >  midgy
+         ...rE  >  merge
+         ...re  >  dumpy
+         .....  >  dumpy
+3+     >  * (guess)
+*      >  soare 
