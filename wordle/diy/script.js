@@ -182,11 +182,17 @@ function analyze() {
   }
 
   const time = performance.now() - start;
-  response += `\n\nTime: ${time.toFixed(2)} ms`;
+  response += `\n\nTime: ${time.toFixed(2)} ms  `;
 
   const analysis_box = document.createElement("div");
   analysis_box.classList.add("analysis");
   analysis_box.textContent = response;
+
+  const analyze_link = document.createElement("a");
+  analyze_link.text = "Explore";
+  analyze_link.target = "_blank";
+  analyze_link.href = `https://scottlouvau.github.io/pwa/wordle-analyze/?g=${guesses_joined}`;
+  analysis_box.appendChild(analyze_link);
   
   overlay.innerHTML = "";
   overlay.appendChild(analysis_box);

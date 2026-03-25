@@ -340,3 +340,7 @@ body {
   width: 90%;
   max-width: 40em;
 }
+
+.overlay .analysis a {
+  color: white;
+}
