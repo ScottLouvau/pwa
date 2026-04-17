@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <rect x="0" y="0" width="512" height="512" rx="76" ry="76" fill="#c9a876"/>
+  <line x1="38" y1="256" x2="474" y2="256" stroke="rgba(0,0,0,0.25)" stroke-width="4"/>
+  <g fill="#3a2a1a">
+    <circle cx="170" cy="64" r="19"/>
+    <circle cx="170" cy="107" r="19"/>
+    <circle cx="170" cy="149" r="19"/>
+    <circle cx="170" cy="192" r="19"/>
+    <circle cx="170" cy="235" r="19"/>
+    <circle cx="170" cy="277" r="19"/>
+    <circle cx="170" cy="320" r="19"/>
+    <circle cx="170" cy="363" r="19"/>
+    <circle cx="170" cy="405" r="19"/>
+    <circle cx="170" cy="448" r="19"/>
+    <circle cx="342" cy="64" r="19"/>
+    <circle cx="342" cy="107" r="19"/>
+    <circle cx="342" cy="149" r="19"/>
+    <circle cx="342" cy="192" r="19"/>
+    <circle cx="342" cy="235" r="19"/>
+    <circle cx="342" cy="277" r="19"/>
+    <circle cx="342" cy="320" r="19"/>
+    <circle cx="342" cy="363" r="19"/>
+    <circle cx="342" cy="405" r="19"/>
+    <circle cx="342" cy="448" r="19"/>
+  </g>
+  <circle cx="170" cy="192" r="29" fill="#d64545" opacity="0.55" stroke="rgba(0,0,0,0.4)" stroke-width="2.5"/>
+  <circle cx="170" cy="235" r="29" fill="#d64545" stroke="rgba(0,0,0,0.4)" stroke-width="2.5"/>
+  <circle cx="342" cy="277" r="29" fill="#4a6fd4" opacity="0.55" stroke="rgba(0,0,0,0.4)" stroke-width="2.5"/>
+  <circle cx="342" cy="320" r="29" fill="#4a6fd4" stroke="rgba(0,0,0,0.4)" stroke-width="2.5"/>
+</svg>

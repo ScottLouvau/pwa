@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <meta name="theme-color" content="#8b5a2b">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Cribbage">
+  <title>Cribbage Score Keeper</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" type="image/svg+xml" href="icons/icon-192.svg">
+  <link rel="apple-touch-icon" href="icons/icon-192.svg">
+  <link rel="stylesheet" href="index.css">
+</head>
+<body>
+  <div id="app">
+    <div class="scores-row">
+      <div class="score red-score" id="redScore">0</div>
+      <div class="score blue-score" id="blueScore">0</div>
+    </div>
+
+    <div class="play-row">
+      <div class="buttons red-buttons" id="redButtons"></div>
+      <div class="board-container">
+        <svg id="board" preserveAspectRatio="xMidYMid meet" aria-label="Cribbage board"></svg>
+      </div>
+      <div class="buttons blue-buttons" id="blueButtons"></div>
+    </div>
+
+    <div class="controls-row">
+      <button id="undoBtn" aria-label="Undo last score">
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+          <path fill="currentColor" d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62A7.44 7.44 0 0 1 12.5 10.5c3.54 0 6.55 2.31 7.6 5.5l2.37-.78A9.985 9.985 0 0 0 12.5 8z"/>
+        </svg>
+        <span>Undo</span>
+      </button>
+      <button id="newBtn" aria-label="New game">
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+          <path fill="currentColor" d="M17.65 6.35A7.958 7.958 0 0 0 12 4a8 8 0 1 0 7.75 10h-2.08A6 6 0 1 1 12 6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
+        </svg>
+        <span>New</span>
+      </button>
+    </div>
+
+    <div class="overlay hidden" id="tenPlusOverlay" role="dialog" aria-modal="true">
+      <div class="overlay-content">
+        <h2 id="tenPlusTitle">Add Points</h2>
+        <div class="overlay-grid" id="tenPlusGrid"></div>
+        <button class="overlay-cancel" id="tenPlusCancel">Cancel</button>
+      </div>
+    </div>
+
+    <div class="overlay hidden" id="newGameOverlay" role="dialog" aria-modal="true">
+      <div class="overlay-content small">
+        <h2>Start a new game?</h2>
+        <p>This resets both scores to zero.</p>
+        <div class="overlay-buttons">
+          <button id="cancelNew">Cancel</button>
+          <button id="confirmNew" class="primary">New Game</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="index.js"></script>
+</body>
+</html>

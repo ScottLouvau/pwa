@@ -1,0 +1,25 @@
+{
+  "name": "Cribbage Score Keeper",
+  "short_name": "Cribbage",
+  "description": "Track cribbage scores on a digital peg board.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#1f1f22",
+  "theme_color": "#8b5a2b",
+  "icons": [
+    {
+      "src": "icons/icon-192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
