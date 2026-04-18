@@ -1,2 +1,3 @@
+- When fixing bugs, make minimal, tactical changes. Don't make changes unrelated to the current requests.
 - Design a pure JavaScript app with minimal dependencies
 - Aim to keep the code simple and straightforward as much as possible
