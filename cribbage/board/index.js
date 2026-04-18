@@ -7,6 +7,7 @@
   const BOARD_MARGIN = 16;
 
   const HOLE_RADIUS = 4;
+  const PEG_RADIUS = 5;
   const HOLE_SPACING = 13;
   const TEAM_SPACING = 13;
 
@@ -61,44 +62,37 @@
     parts.push(`<g fill="#3A2A1A">`);
     for (let team = 0; team < state.teamCount; team++) {
       for (let score = 1; score <= 120; score++) {
-        parts.push(circleForScore(team, score));
+        parts.push(circleForScore(team, score, HOLE_RADIUS));
       }
     }
     parts.push(`</g>`);
 
     // Lines, except in corners
     parts.push(`<g stroke="rgba(0,0,0,0.25)" stroke-width="1">`);
-    const radius = HOLE_RADIUS + TEAM_SPACING + 4;
+    const radius = HOLE_RADIUS + 4;
+    const lastTeam = state.teamCount - 1;
     for (let score of [10, 20, 30, 50, 70, 80, 90, 110]) {
-      const p = holePosition(0, (score * 6/5));
-
-      if (score === 90) {
-        parts.push(`<line x1="${p.x - p.tx * radius}" y1="${p.y - p.ty * radius}" x2="${p.x + p.tx * radius}" y2="${p.y + p.ty * radius}" stroke="#a62f2f" />`);
-      } else {
-        parts.push(`<line x1="${p.x - p.tx * radius}" y1="${p.y - p.ty * radius}" x2="${p.x + p.tx * radius}" y2="${p.y + p.ty * radius}" />`);
-      }
+      const pS = holePosition(0, (score * 6/5));
+      const pE = holePosition(lastTeam, (score * 6/5));
+      const color = (score === 90 ? `stroke="var(--red-dark)"` : ``);
+      parts.push(`<line x1="${pS.x - pS.tx * radius}" y1="${pS.y - pS.ty * radius}" x2="${pE.x + pE.tx * radius}" y2="${pE.y + pE.ty * radius}" ${color} />`);
     }
     parts.push(`</g>`);
 
-    parts.push(circleForScore(0, state.redScore, "var(--red)"));
-    parts.push(circleForScore(0, state.redLast, "var(--red-dark)"));
-    parts.push(circleForScore(1, state.blueScore, "var(--blue)"));
-    parts.push(circleForScore(1, state.blueLast, "var(--blue-dark)"));
+    parts.push(circleForScore(0, state.redScore, PEG_RADIUS, `fill="var(--red)"`));
+    parts.push(circleForScore(0, state.redLast, PEG_RADIUS, `fill="var(--red-dark)"`));
+    parts.push(circleForScore(1, state.blueScore, PEG_RADIUS, `fill="var(--blue)"`));
+    parts.push(circleForScore(1, state.blueLast, PEG_RADIUS, `fill="var(--blue-dark)"`));
 
     board.innerHTML = parts.join('');
   }
 
-  function circleForScore(team, score, color) {
+  function circleForScore(team, score, radius, additional) {
     if (score < 1 || score > 120) { return ""; }
 
     const hole = scoreToHole(score)
     const p = holePosition(team, hole);
-
-    if (color) {
-      return `<circle cx="${p.x}" cy="${p.y}" r="${HOLE_RADIUS + 1}" fill="${color}" />`;
-    } else {
-      return `<circle cx="${p.x}" cy="${p.y}" r="${HOLE_RADIUS}" />`;
-    }
+    return `<circle cx="${p.x}" cy="${p.y}" r="${radius}" ${additional} />`;
   }
 
   let state = {
