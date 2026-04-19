@@ -100,3 +100,16 @@ circle.peg {
   color: var(--foreground);
   background-color: var(--blue);
 }
+
+svg text {
+  user-select: none;
+}
+
+svg .button {
+  cursor: pointer;
+}
+
+svg .button:hover {
+  filter: brightness(120%);
+}
+

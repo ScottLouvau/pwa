@@ -9,6 +9,9 @@ const PEG_RADIUS = 5;
 const HOLE_SPACING = 13;
 const TEAM_SPACING = 13;
 
+const BUTTON_SIZE = 24;
+const BUTTON_SPACING = 30;
+
 // Each side of the board (top, right, bottom, left) has a range of holes.
 // For each side:
 //  - min and max hole on that side
@@ -32,8 +35,7 @@ let state =  {
 const board = document.getElementById('board');
 board.setAttribute('viewBox', `0 0 ${BOARD_WIDTH} ${BOARD_HEIGHT}`);
 
-renderBoard(state);
-addButtons();
+renderBoard();
 document.addEventListener('keydown', handleKeyDown);
 
 // Translate score (1-120) to a 'hole' on the board.
@@ -58,7 +60,7 @@ function holePosition(team, hole) {
   return { x: x, y: y, dx: range.dx, dy: range.dy, tx: range.tx, ty: range.ty };
 }
 
-function renderBoard(state) {
+function renderBoard() {
   const parts = [];
 
   parts.push(`<rect x="0" y="0" width="${BOARD_WIDTH}" height="${BOARD_HEIGHT}" rx="16" ry="16" fill="#C9A876" />`);
@@ -88,17 +90,32 @@ function renderBoard(state) {
   }
   parts.push(`</g>`);
 
+  // Pegs
   for (let team of state.teams) {
     parts.push(circleForScore(team.index, team.score, PEG_RADIUS, `fill="var(${team.color})" class="peg team-${team.index} current"`));
     parts.push(circleForScore(team.index, team.last, PEG_RADIUS, `fill="var(${team.color})" class="peg team-${team.index} last"`));
   }
 
-  parts.push(`<rect id="team-0-1" x="${BOARD_WIDTH / 2}" y="${BOARD_HEIGHT / 4}" width="24" height="24" fill="var(--red-dark)" />`);
+  // Scoring Buttons
+  const innerBoardMargin = BOARD_MARGIN + TEAM_SPACING * state.teams.length;
+  let x = innerBoardMargin;
+
+  for (let score = 1; score <= 5; score++) {
+    parts.push(`<g id="team-0-${score}" transform="translate(${x}, ${innerBoardMargin})" width="${BUTTON_SIZE}" height="${BUTTON_SIZE}" class="button">`)
+    parts.push(`<rect fill="var(--red-dark)" width="${BUTTON_SIZE}" height="${BUTTON_SIZE}" rx="3" />`);
+    parts.push(`<text x="${BUTTON_SIZE / 2}" y="${BUTTON_SIZE / 2}" font-size="${BUTTON_SIZE / 2}" text-anchor="middle" dominant-baseline="central" fill="var(--foreground)">+${score}</text>`);
+    parts.push(`</g>`);
+
+    x += BUTTON_SPACING;
+  }
 
   board.innerHTML = parts.join('');
 
-  document.getElementById("team-0-1").addEventListener("click", () => addToScore(0, 1));
-  
+  for (let team = 0; team < 1; team++) {
+    for (let score = 1; score <= 5; score++) {
+      let rect = document.getElementById(`team-${team}-${score}`).addEventListener("click", () => addToScore(team, score));
+    }
+  }
 }
 
 function circleForScore(team, score, radius, additional) {
@@ -126,8 +143,6 @@ function addToScore(teamIndex, points) {
   const p = holePosition(teamIndex, scoreToHole(team.score));
   last.setAttribute('cx', p.x);
   last.setAttribute('cy', p.y);
-
-  //redrawPegs();
 }
 
 function redrawPegs() {
@@ -141,20 +156,6 @@ function redrawPegs() {
     const lP = holePosition(team.index, scoreToHole(team.last));
     last.setAttribute('cx', lP.x);
     last.setAttribute('cy', lP.y);
-  }
-}
-
-function addButtons() {
-  for (let teamIndex = 0; teamIndex < state.teams.length; teamIndex++) {
-    const container = document.getElementById(`buttons-team${teamIndex}`);
-
-    for (let score = 1; score <= 29; score++) {
-      const button = document.createElement('button');
-      button.type = 'button';
-      button.textContent = `+${score}`;
-      button.addEventListener('click', () => addToScore(teamIndex, score));
-      container.appendChild(button);
-    }
   }
 }
 
