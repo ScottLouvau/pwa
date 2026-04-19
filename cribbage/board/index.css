@@ -1,4 +1,5 @@
 :root {
+  --foreground: #f0f0f0;
   --red: #d64545;
   --red-dark: #a62f2f;
   --blue: #4a6fd4;
@@ -17,7 +18,7 @@ html, body {
   height: 100%;
   overflow: hidden;
   background: #1f1f22;
-  color: #f0f0f0;
+  color: var(--foreground);
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   user-select: none;
   -webkit-user-select: none;
@@ -52,5 +53,21 @@ circle.peg {
   height: 100dvh;
 
   z-index: 2;
-  padding: 60px;
+  padding: 10dvh;
+}
+
+#buttons button {
+  width: 4em;
+  height: 4em;
+  margin: 0em 0.7em 0.7em 0em;
+}
+
+#buttons-team0 button {
+  color: var(--foreground);
+  background-color: var(--red);
+}
+
+#buttons-team1 button {
+  color: var(--foreground);
+  background-color: var(--blue);
 }

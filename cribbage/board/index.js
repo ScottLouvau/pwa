@@ -80,8 +80,8 @@
     parts.push(`</g>`);
 
     for (let team of state.teams) {
-      parts.push(circleForScore(team.index, team.score, PEG_RADIUS, `fill="var(${team.color})" id="score-${team.index}" class="peg"`));
-      parts.push(circleForScore(team.index, team.last, PEG_RADIUS, `fill="var(${team.color})" id="last-${team.index}" class="peg"`));
+      parts.push(circleForScore(team.index, team.score, PEG_RADIUS, `fill="var(${team.color})" class="peg team-${team.index} current"`));
+      parts.push(circleForScore(team.index, team.last, PEG_RADIUS, `fill="var(${team.color})" class="peg team-${team.index} last"`));
     }
 
     board.innerHTML = parts.join('');
@@ -100,27 +100,76 @@
     team.last = team.score;
     team.score += points;
 
-    const score = document.getElementById(`score-${teamIndex}`);
-    const last = document.getElementById(`last-${teamIndex}`);
+    const current = document.querySelector(`.team-${teamIndex}.current`);
+    const last = document.querySelector(`.team-${teamIndex}.last`);
+
+    current.classList.remove("current");
+    current.classList.add("last");
+
+    last.classList.add("current");
+    last.classList.remove("last");
 
     const p = holePosition(teamIndex, scoreToHole(team.score));
+    last.setAttribute('cx', p.x);
+    last.setAttribute('cy', p.y);
 
-    last.setAttribute('cx', p.x.toString());
-    last.setAttribute('cy', p.y.toString());
-    last.setAttribute('id', `score-${teamIndex}`);
-
-    score.setAttribute('id', `last-${teamIndex}`);
-    //renderBoard(state);
+    //redrawPegs();
   }
 
-  let state = {
-    teams: [
-      { index: 0, color: "--red", score: 58, last: 54 },
-      { index: 1, color: "--blue", score: 69, last: 68 }
-    ]
-  };
+  function redrawPegs() {
+    for (let team of state.teams) {
+      const current = document.querySelector(`.team-${team.index}.current`);
+      const cP = holePosition(team.index, scoreToHole(team.score));
+      current.setAttribute('cx', cP.x);
+      current.setAttribute('cy', cP.y);
 
-  document.getElementById("red-one").addEventListener("click", () => addToScore(0, 1));
+      const last = document.querySelector(`.team-${team.index}.last`);
+      const lP = holePosition(team.index, scoreToHole(team.last));
+      last.setAttribute('cx', lP.x);
+      last.setAttribute('cy', lP.y);
+    }
+  }
+
+  function addButtons() {
+    for (let teamIndex = 0; teamIndex < state.teams.length; teamIndex++) {
+      const container = document.getElementById(`buttons-team${teamIndex}`);
+
+      for (let score = 1; score <= 10; score++) {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.textContent = `+${score}`;
+        button.addEventListener('click', () => addToScore(teamIndex, score));
+        container.appendChild(button);
+      }
+    }
+  }
+
+  function resetGame() {
+    state = {
+      teams: [
+        { index: 0, color: "--red", score: 0, last: 0 },
+        { index: 1, color: "--blue", score: 0, last: 0 }
+      ]
+    };
+
+    redrawPegs();
+  }
+
+  function handleKeyDown(event) {
+    if (event.key === "Backspace") {
+      resetGame();
+    }
+  }
+
+  let state =  {
+      teams: [
+        { index: 0, color: "--red", score: 0, last: 0 },
+        { index: 1, color: "--blue", score: 0, last: 0 }
+      ]
+    };
 
   renderBoard(state);
+  addButtons();
+
+  document.addEventListener('keydown', handleKeyDown);
 })();
