@@ -1,20 +1,10 @@
 :root {
-  --bg: #1f1f22;
-  --text: #f0f0f0;
+  --foreground: #f0f0f0;
   --red: #d64545;
   --red-dark: #a62f2f;
   --blue: #4a6fd4;
   --blue-dark: #2f4da6;
-  --board-bg: #c9a876;
-  --hole-color: #3a2a1a;
-  --skunk-line: rgba(0, 0, 0, 0.55);
-  --group-line: rgba(0, 0, 0, 0.2);
-  --track-arc: rgba(0, 0, 0, 0.25);
-  --btn-bg: #3a3a3f;
-  --btn-bg-hover: #4a4a4f;
   --gap: 8px;
-  --score-size: clamp(2.2rem, 9vmin, 4.5rem);
-  --btn-size: clamp(1rem, 3.5vmin, 1.3rem);
 }
 
 * {
@@ -27,16 +17,20 @@ html, body {
   width: 100%;
   height: 100%;
   overflow: hidden;
-  background: var(--bg);
-  color: var(--text);
+  background: #1f1f22;
+  color: var(--foreground);
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   user-select: none;
   -webkit-user-select: none;
   -webkit-tap-highlight-color: transparent;
-  touch-action: manipulation;
+  touch-action: none;
 }
 
 button { font-family: inherit; }
+
+circle.peg {
+  transition: all 0.2s ease-in-out;
+}
 
 #app {
   height: 100vh;
@@ -51,240 +45,29 @@ button { font-family: inherit; }
     calc(var(--gap) + env(safe-area-inset-left));
 }
 
-/* ---------- Scores ---------- */
-.scores-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 calc(var(--gap) * 2);
-}
-
-.score {
-  font-size: var(--score-size);
-  font-weight: 800;
-  line-height: 1;
-  font-variant-numeric: tabular-nums;
-  min-width: 2ch;
-  text-align: center;
-  transform-origin: center;
-}
-.red-score { color: var(--red); }
-.blue-score { color: var(--blue); }
-
-.score.bump { animation: bump 0.45s ease-out; }
-@keyframes bump {
-  0%   { filter: brightness(1); }
-  35%  { filter: brightness(1.6) drop-shadow(0 0 6px currentColor); }
-  100% { filter: brightness(1); }
-}
-
-/* ---------- Play row ---------- */
-.play-row {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  gap: var(--gap);
-  min-height: 0;
-  align-items: stretch;
-}
-
-.buttons {
-  display: grid;
-  grid-template-rows: repeat(10, minmax(0, 1fr));
-  gap: 4px;
-  min-height: 0;
-}
-
-.buttons button {
-  min-width: 44px;
-  min-height: 0;
-  border: none;
-  border-radius: 8px;
-  color: white;
-  font-size: var(--btn-size);
-  font-weight: 700;
-  cursor: pointer;
-  padding: 4px 10px;
-  transition: transform 0.08s, background-color 0.1s;
-}
-.buttons button:active { transform: scale(0.94); }
-
-.red-buttons button { background: var(--red); }
-.red-buttons button:hover { background: var(--red-dark); }
-.blue-buttons button { background: var(--blue); }
-.blue-buttons button:hover { background: var(--blue-dark); }
-
-.buttons button.tenplus { background: #555; color: #fff; }
-.red-buttons button.tenplus { background: var(--red-dark); }
-.blue-buttons button.tenplus { background: var(--blue-dark); }
-
-/* ---------- Board ---------- */
-.board-container {
-  display: flex;
-  justify-content: center;
-  align-items: stretch;
-  min-height: 0;
-  min-width: 0;
-  overflow: hidden;
-}
-#board {
-  height: 100%;
+#buttons {
+  position: absolute;
+  top: 0px;
+  left: 0px;
   width: 100%;
-  max-width: 100%;
-  max-height: 100%;
-  display: block;
+  height: 100dvh;
+
+  z-index: 2;
+  padding: 10dvh;
 }
 
-/* SVG element styling (attributes resolved reliably across browsers via CSS) */
-#board .board-bg   { fill: var(--board-bg); }
-#board .hole       { fill: var(--hole-color); }
-#board .group-line { stroke: var(--group-line); stroke-width: 0.6; stroke-linecap: round; }
-#board .skunk-line { stroke: var(--skunk-line); stroke-width: 1.6; stroke-linecap: round; }
-#board .track-arc  { fill: none; stroke: var(--track-arc); stroke-width: 1.2; stroke-linecap: round; }
-#board .peg-red    { fill: var(--red);  stroke: rgba(0,0,0,0.45); stroke-width: 0.4; }
-#board .peg-blue   { fill: var(--blue); stroke: rgba(0,0,0,0.45); stroke-width: 0.4; }
-#board .peg-trail  { opacity: 0.55; }
-
-/* ---------- Controls ---------- */
-.controls-row {
-  display: flex;
-  justify-content: center;
-  gap: var(--gap);
-  padding: 0 var(--gap);
-}
-.controls-row button {
-  min-height: 44px;
-  min-width: 88px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  background: var(--btn-bg);
-  color: var(--text);
-  border: none;
-  border-radius: 8px;
-  padding: 8px 18px;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.1s, transform 0.08s;
-}
-.controls-row button:hover { background: var(--btn-bg-hover); }
-.controls-row button:active { transform: scale(0.96); }
-.controls-row svg { flex-shrink: 0; }
-
-/* ---------- Overlays ---------- */
-.overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.7);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 100;
-  padding: 16px;
-  backdrop-filter: blur(2px);
-}
-.overlay.hidden { display: none; }
-
-.overlay-content {
-  background: #2a2a2f;
-  padding: 20px;
-  border-radius: 14px;
-  max-width: 100%;
-  max-height: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  overflow: auto;
-  border: 1px solid rgba(255,255,255,0.08);
-}
-.overlay-content.small { max-width: 380px; }
-.overlay-content h2 { font-size: 1.25rem; font-weight: 700; }
-.overlay-content p  { font-size: 0.95rem; opacity: 0.85; }
-.overlay-content h2.winner-red  { color: var(--red); }
-.overlay-content h2.winner-blue { color: var(--blue); }
-.overlay-content .skunk {
-  font-weight: 700;
-  color: #f0b341;
-  font-size: 1.05rem;
-}
-.overlay-content .hidden { display: none; }
-
-.overlay-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-}
-.overlay-grid button {
-  min-height: 52px;
-  border: none;
-  border-radius: 8px;
-  color: white;
-  font-size: 1.15rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: transform 0.08s, background-color 0.1s;
-}
-.overlay-grid button:active { transform: scale(0.95); }
-.overlay-grid.team-red  button { background: var(--red); }
-.overlay-grid.team-red  button:hover { background: var(--red-dark); }
-.overlay-grid.team-blue button { background: var(--blue); }
-.overlay-grid.team-blue button:hover { background: var(--blue-dark); }
-
-.overlay-cancel {
-  min-height: 44px;
-  background: #4a4a4f;
-  color: var(--text);
-  border: none;
-  border-radius: 8px;
-  padding: 10px 16px;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-}
-.overlay-cancel:hover { background: #5a5a5f; }
-
-.overlay-buttons {
-  display: flex;
-  gap: 8px;
-  justify-content: flex-end;
-  flex-wrap: wrap;
-}
-.overlay-buttons button {
-  min-height: 44px;
-  min-width: 88px;
-  border: none;
-  border-radius: 8px;
-  padding: 8px 18px;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  background: #4a4a4f;
-  color: var(--text);
-}
-.overlay-buttons button.primary {
-  background: var(--red);
-  color: white;
-}
-.overlay-buttons button:hover { filter: brightness(1.15); }
-
-/* ---------- Device-orientation-based rotation ----------
-   All rotations go the SAME direction for both teams. Rotation angle is
-   driven by the physical device orientation (screen.orientation.angle),
-   not the browser aspect ratio. At angle 0 / 180 nothing rotates. At
-   angle 90 / 270 we use vertical writing mode so labels flow top-to-bottom
-   the same way on both sides. */
-body[data-rotate="90"]  .score,
-body[data-rotate="270"] .score,
-body[data-rotate="90"]  .buttons button,
-body[data-rotate="270"] .buttons button {
-  writing-mode: vertical-rl;
-  text-orientation: mixed;
+#buttons button {
+  width: 4em;
+  height: 4em;
+  margin: 0em 0.7em 0.7em 0em;
 }
 
-body[data-rotate="180"] .score {
-  transform: rotate(180deg);
+#buttons-team0 button {
+  color: var(--foreground);
+  background-color: var(--red);
 }
-body[data-rotate="180"] .buttons button {
-  transform: rotate(180deg);
+
+#buttons-team1 button {
+  color: var(--foreground);
+  background-color: var(--blue);
 }
