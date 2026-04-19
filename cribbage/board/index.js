@@ -60,7 +60,7 @@
 
     // Holes
     parts.push(`<g fill="#3A2A1A">`);
-    for (let team = 0; team < state.teamCount; team++) {
+    for (let team = 0; team < state.teams.length; team++) {
       for (let score = 1; score <= 120; score++) {
         parts.push(circleForScore(team, score, HOLE_RADIUS));
       }
@@ -70,7 +70,7 @@
     // Lines, except in corners
     parts.push(`<g stroke="rgba(0,0,0,0.25)" stroke-width="1">`);
     const radius = HOLE_RADIUS + 4;
-    const lastTeam = state.teamCount - 1;
+    const lastTeam = state.teams.length - 1;
     for (let score of [10, 20, 30, 50, 70, 80, 90, 110]) {
       const pS = holePosition(0, (score * 6/5));
       const pE = holePosition(lastTeam, (score * 6/5));
@@ -79,29 +79,48 @@
     }
     parts.push(`</g>`);
 
-    parts.push(circleForScore(0, state.redScore, PEG_RADIUS, `fill="var(--red)"`));
-    parts.push(circleForScore(0, state.redLast, PEG_RADIUS, `fill="var(--red-dark)"`));
-    parts.push(circleForScore(1, state.blueScore, PEG_RADIUS, `fill="var(--blue)"`));
-    parts.push(circleForScore(1, state.blueLast, PEG_RADIUS, `fill="var(--blue-dark)"`));
+    for (let team of state.teams) {
+      parts.push(circleForScore(team.index, team.score, PEG_RADIUS, `fill="var(${team.color})" id="score-${team.index}" class="peg"`));
+      parts.push(circleForScore(team.index, team.last, PEG_RADIUS, `fill="var(${team.color})" id="last-${team.index}" class="peg"`));
+    }
 
     board.innerHTML = parts.join('');
   }
 
   function circleForScore(team, score, radius, additional) {
-    if (score < 1 || score > 120) { return ""; }
+    if (score < 0 || score > 120) { return ""; }
 
     const hole = scoreToHole(score)
     const p = holePosition(team, hole);
     return `<circle cx="${p.x}" cy="${p.y}" r="${radius}" ${additional} />`;
   }
 
+  function addToScore(teamIndex, points) {
+    var team = state.teams[teamIndex];
+    team.last = team.score;
+    team.score += points;
+
+    const score = document.getElementById(`score-${teamIndex}`);
+    const last = document.getElementById(`last-${teamIndex}`);
+
+    const p = holePosition(teamIndex, scoreToHole(team.score));
+
+    last.setAttribute('cx', p.x.toString());
+    last.setAttribute('cy', p.y.toString());
+    last.setAttribute('id', `score-${teamIndex}`);
+
+    score.setAttribute('id', `last-${teamIndex}`);
+    //renderBoard(state);
+  }
+
   let state = {
-    teamCount: 2,
-    redScore: 58,
-    redLast: 54,
-    blueScore: 69,
-    blueLast: 68
+    teams: [
+      { index: 0, color: "--red", score: 58, last: 54 },
+      { index: 1, color: "--blue", score: 69, last: 68 }
+    ]
   };
+
+  document.getElementById("red-one").addEventListener("click", () => addToScore(0, 1));
 
   renderBoard(state);
 })();
