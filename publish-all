@@ -13,3 +13,8 @@ cd ./wordle/diy
 ./publish
 cd ../..
 ./hash-files/target/release/hash-files ./publish/wordle-diy ./publish/wordle-diy/service-worker.js
+
+cd ./cribbage
+./publish
+cd ...
+#./hash-files/target/release/hash-files ./publish/cribbage ./publish/cribbage/service-worker.js

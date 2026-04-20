@@ -1,0 +1,8 @@
+#!/bin/bash
+DEST=../../publish/cribbage
+
+#./build
+
+rm -rf "$DEST"
+mkdir "$DEST"
+cp -r * "$DEST"
