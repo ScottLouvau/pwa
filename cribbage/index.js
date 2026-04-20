@@ -32,7 +32,9 @@ let state = {
     { index: 0, color: "--red", score: 0, last: 0 },
     { index: 1, color: "--blue", score: 0, last: 0 },
     { index: 2, color: "--white", score: 0, last: 0 }
-  ]
+  ],
+  undo: [],
+  redo: []
 };
 
 const board = document.getElementById('board');
@@ -40,6 +42,8 @@ board.setAttribute('viewBox', `0 0 ${BOARD_WIDTH} ${BOARD_HEIGHT}`);
 
 renderBoard();
 document.addEventListener('keydown', handleKeyDown);
+
+// ---- Render SVG Board -----
 
 // Translate score (1-120) to a 'hole' on the board.
 // There is a sixth hole after every five to make the groups of five.
@@ -115,13 +119,32 @@ function renderBoard() {
     addButtons(parts, centerP.x, centerP.y, 2, "var(--white-dark)", "var(--white)");
   }
 
+  // Action Buttons
+  const actionButtonWidth = BUTTON_SIZE * 3;
+
+  const undoP = holePosition(lastTeam + 1, 90 * 6/5);
+  addButton(parts, "undo", undoP.x - actionButtonWidth / 2, undoP.y - BUTTON_SIZE, actionButtonWidth, "Undo", "var(--button)");
+
+  const newGameP = holePosition(lastTeam + 1, 80 * 6/5);
+  addButton(parts, "new-game", newGameP.x - actionButtonWidth / 2, newGameP.y - BUTTON_SIZE, actionButtonWidth, "New Game", "var(--button)");
+
+  const redoP = holePosition(lastTeam + 1, 70 * 6/5);  
+  addButton(parts, "redo", redoP.x - actionButtonWidth / 2, redoP.y - BUTTON_SIZE, actionButtonWidth, "Redo", "var(--button)");
+
+
+  // Load into SVG
   board.innerHTML = parts.join('');
 
+  // Hook up scoring button event handlers
   for (let team = 0; team < state.teams.length; team++) {    
     for (let score of POSSIBLE_SCORES) {
-      let rect = document.getElementById(`team-${team}-${score}`).addEventListener("click", () => addToScore(team, score));
+      document.getElementById(`team-${team}-${score}`).addEventListener("click", () => addToScore(team, score));
     }
   }
+
+  document.getElementById(`undo`).addEventListener("click", () => undo());
+  document.getElementById(`new-game`).addEventListener("click", () => resetGame());
+  document.getElementById(`redo`).addEventListener("click", () => redo());
 }
 
 function circleForScore(team, score, radius, additional) {
@@ -150,11 +173,7 @@ function addButtons(parts, center, top, team, color, scoreColor) {
 
     for (let col = 1; col <= 5; col++) {
       let score = POSSIBLE_SCORES[index];
-
-      parts.push(`<g id="team-${team}-${score}" transform="translate(${x}, ${y})" width="${BUTTON_SIZE}" height="${BUTTON_SIZE}" class="button">`);
-      parts.push(`<rect fill="${color}" width="${BUTTON_SIZE}" height="${BUTTON_SIZE}" rx="3" />`);
-      parts.push(`<text x="${BUTTON_SIZE / 2}" y="${BUTTON_SIZE / 2}" font-size="${BUTTON_SIZE / 2}" text-anchor="middle" dominant-baseline="central" fill="var(--foreground)">+${score}</text>`);
-      parts.push(`</g>`);
+      addButton(parts, `team-${team}-${score}`, x, y, BUTTON_SIZE, `+${score}`, color);
 
       index += 1;
       x += BUTTON_SPACING;
@@ -163,25 +182,11 @@ function addButtons(parts, center, top, team, color, scoreColor) {
   }
 }
 
-function addToScore(teamIndex, points) {
-  var team = state.teams[teamIndex];
-  team.last = team.score;
-  team.score += points;
-
-  const current = document.querySelector(`.team-${teamIndex}.current`);
-  const last = document.querySelector(`.team-${teamIndex}.last`);
-
-  current.classList.remove("current");
-  current.classList.add("last");
-
-  last.classList.add("current");
-  last.classList.remove("last");
-
-  const p = holePosition(teamIndex, scoreToHole(team.score));
-  last.setAttribute('cx', p.x);
-  last.setAttribute('cy', p.y);
-
-  document.getElementById(`team-score-${teamIndex}`).textContent = team.score.toString();
+function addButton(parts, id, x, y, width, text, color) {
+  parts.push(`<g id="${id}" transform="translate(${x}, ${y})" width="${width}" height="${BUTTON_SIZE}" class="button">`);
+  parts.push(`<rect fill="${color}" width="${width}" height="${BUTTON_SIZE}" rx="3" />`);
+  parts.push(`<text x="${width / 2}" y="${BUTTON_SIZE / 2}" font-size="${BUTTON_SIZE / 2}" text-anchor="middle" dominant-baseline="central" fill="var(--foreground)">${text}</text>`);
+  parts.push(`</g>`);
 }
 
 function redrawPegs() {
@@ -200,13 +205,92 @@ function redrawPegs() {
   }
 }
 
+function showScoreIncrease(teamIndex, toNewScore) {
+  // Move back peg forward to new score (and swap which is 'back' peg)
+  const last = document.querySelector(`.team-${teamIndex}.last`);
+  swapCurrentAndLastPegs(teamIndex);
+  
+  const p = holePosition(teamIndex, scoreToHole(toNewScore));
+  last.setAttribute('cx', p.x);
+  last.setAttribute('cy', p.y);
+
+  // Update shown score
+  document.getElementById(`team-score-${teamIndex}`).textContent = toNewScore.toString();
+}
+
+function showScoreDecrease(teamIndex, toNewScore, toNewLastScore) {
+  // Move current peg back to old last score (and swap which is 'back' peg)
+  const current = document.querySelector(`.team-${teamIndex}.current`);
+  swapCurrentAndLastPegs(teamIndex);
+  
+  const p = holePosition(teamIndex, scoreToHole(toNewLastScore));
+  current.setAttribute('cx', p.x);
+  current.setAttribute('cy', p.y);
+
+  // Update shown score
+  document.getElementById(`team-score-${teamIndex}`).textContent = toNewScore.toString();
+}
+
+// ---- EVENTS ----
+
+function swapCurrentAndLastPegs(teamIndex) {
+  const current = document.querySelector(`.team-${teamIndex}.current`);
+  const last = document.querySelector(`.team-${teamIndex}.last`);
+
+  current.classList.remove("current");
+  current.classList.add("last");
+
+  last.classList.add("current");
+  last.classList.remove("last");
+}
+
+function addToScore(teamIndex, points) {
+  var team = state.teams[teamIndex];
+  
+  state.undo.push({ team: team.index, last: team.last, score: team.score });
+  state.redo = [];
+
+  team.last = team.score;
+  team.score += points;
+
+  showScoreIncrease(teamIndex, team.score);
+}
+
+function undo() {
+  if (state.undo.length === 0) { return; }
+  let toUndo = state.undo.pop();
+
+  var team = state.teams[toUndo.team];
+  state.redo.push({ team: team.index, last: team.last, score: team.score });
+
+  team.last = toUndo.last;
+  team.score = toUndo.score;
+
+  showScoreDecrease(team.index, team.score, team.last);
+}
+
+function redo() {
+  if (state.redo.length === 0) { return; }
+  let toRedo = state.redo.pop();
+
+  var team = state.teams[toRedo.team];
+  state.undo.push({ team: team.index, last: team.last, score: team.score });
+
+  team.last = toRedo.last;
+  team.score = toRedo.score;
+
+  showScoreIncrease(toRedo.team, team.score);
+}
+
 function resetGame() {
   state = {
     teams: [
       { index: 0, color: "--red", score: 0, last: 0 },
       { index: 1, color: "--blue", score: 0, last: 0 },
       { index: 2, color: "--white", score: 0, last: 0 }
-    ]
+    ],
+    undo: [],
+    redo: []
   };
 
   redrawPegs();
