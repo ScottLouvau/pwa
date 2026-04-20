@@ -1,6 +1,6 @@
 
 // iPhone viewport is 852 x 393
-const BOARD_WIDTH = 760;
+const BOARD_WIDTH = 780;
 const BOARD_HEIGHT = 380;
 const BOARD_MARGIN = 16;
 
@@ -48,6 +48,9 @@ function scoreToHole(score) {
 }
 
 function holePosition(team, hole) {
+  if (hole > (120 * 6/5)) { hole = 120 * 6/5; }
+  if (hole < 0) { hole = 0; }
+
   // Find which side of the board this hole is on
   const range = HOLE_RANGES.find(r => hole <= r.max);
   const fromStart = hole - range.min;
@@ -122,7 +125,7 @@ function renderBoard() {
 }
 
 function circleForScore(team, score, radius, additional) {
-  if (score < 0 || score > 120) { return ""; }
+  if (score < 0) { return ""; }
 
   const hole = scoreToHole(score)
   const p = holePosition(team, hole);
