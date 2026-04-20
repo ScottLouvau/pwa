@@ -5,7 +5,7 @@
   --red-dark: #a62f2f;
   --blue: #4a6fd4;
   --blue-dark: #2f4da6;
-  --white: #d0d0d0;
+  --white: #f0f0f0;
   --white-dark: #999999;
   --gap: 8px;
 }
@@ -32,8 +32,10 @@ html, body {
 }
 
 #container {
+  margin: auto;
   position: relative;
-  width: 100%;
+  max-width: 100%;
+  max-height: 100%;
   aspect-ratio: 760 / 380;
   overflow: hidden;
 }

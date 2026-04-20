@@ -103,13 +103,13 @@ function renderBoard() {
   const centerP = holePosition(lastTeam + 1, 24);
 
   const redC = holePosition(lastTeam + 1, 6);
-  addButtons(parts, centerP.x - BUTTON_SPACING * 5.5, centerP.y, 0, "var(--red-dark)");
+  addButtons(parts, centerP.x - BUTTON_SPACING * 5.5, centerP.y, 0, "var(--red-dark)", "var(--red)");
 
   const blueC = holePosition(lastTeam + 1, 42);
-  addButtons(parts, centerP.x + BUTTON_SPACING * 5.5, centerP.y, 1, "var(--blue-dark)");
+  addButtons(parts, centerP.x + BUTTON_SPACING * 5.5, centerP.y, 1, "var(--blue-dark)", "var(--blue)");
 
   if (state.teams.length > 2) {
-    addButtons(parts, centerP.x, centerP.y, 2, "var(--white-dark)");
+    addButtons(parts, centerP.x, centerP.y, 2, "var(--white-dark)", "var(--white)");
   }
 
   board.innerHTML = parts.join('');
@@ -129,14 +129,14 @@ function circleForScore(team, score, radius, additional) {
   return `<circle cx="${p.x}" cy="${p.y}" r="${radius}" ${additional} />`;
 }
 
-function addButtons(parts, center, top, team, color) {
+function addButtons(parts, center, top, team, color, scoreColor) {
   const left = center - BUTTON_SPACING * 2.5;
 
   // Alignment Debug Line
   //parts.push(`<line x1="${center}" y1="0" x2="${center}" y2="${BOARD_HEIGHT}" stroke="rgba(0,0,0,0.25)" stroke-width="1"/>`);
 
   parts.push(`<g transform="translate(${center - BUTTON_SIZE / 2}, ${top})" width="${BUTTON_SIZE}" height="${BUTTON_SIZE}" class="button">`);
-  parts.push(`<text id="team-score-${team}" x="${BUTTON_SIZE / 2}" y="${BUTTON_SIZE / 2}" font-size="${BUTTON_SIZE}" text-anchor="middle" dominant-baseline="central" fill="${color}">0</text>`);
+  parts.push(`<text id="team-score-${team}" x="${BUTTON_SIZE / 2}" y="${BUTTON_SIZE / 2}" font-size="${BUTTON_SIZE}" text-anchor="middle" dominant-baseline="central" fill="${scoreColor}">0</text>`);
   parts.push(`</g>`);
 
   let index = 0;
