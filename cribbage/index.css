@@ -48,67 +48,8 @@ html, body {
   height: 100%;
 }
 
-#controls-overlay {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  pointer-events: none;
-}
-
-#controls-inner {
-  pointer-events: auto;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  padding: 3rem 3rem;
-  width: 100%;
-  height: 100%;
-}
-
-.spacer {
-  flex-grow: 2;
-}
-
-.buttons {
-  pointer-events: auto;
-  display: grid;
-  align-items: center;
-  justify-content: center;
-  grid-template-rows: repeat(5, 3.5em);
-  grid-template-columns: repeat(5, 3.5em);
-  gap: .3em;
-  padding: 3em 3em;
-}
-
-button { 
-  font-size: 1em;
-  font-family: inherit; 
-  flex-grow: 1;
-  aspect-ratio: 1 / 1;
-}
-
 circle.peg {
   transition: all 0.2s ease-in-out;
-}
- 
-/* #controls-inner button {
-  width: 8vw;
-  height: 8vw;
-  margin: 0 2vw 2vw 0;
-} */
-
-#buttons-team0 button {
-  color: var(--foreground);
-  background-color: var(--red);
-}
-
-#buttons-team1 button {
-  color: var(--foreground);
-  background-color: var(--blue);
 }
 
 svg text {
@@ -122,4 +63,3 @@ svg .button {
 svg .button:hover {
   filter: brightness(120%);
 }
-
