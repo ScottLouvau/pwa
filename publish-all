@@ -16,5 +16,5 @@ cd ../..
 
 cd ./cribbage
 ./publish
-cd ...
+cd ..
 #./hash-files/target/release/hash-files ./publish/cribbage ./publish/cribbage/service-worker.js
