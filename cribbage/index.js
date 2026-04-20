@@ -9,8 +9,9 @@ const PEG_RADIUS = 5;
 const HOLE_SPACING = 13;
 const TEAM_SPACING = 13;
 
-const BUTTON_SIZE = 24;
-const BUTTON_SPACING = 30;
+// 7 button rows = 20 pegs + 3 gaps
+const BUTTON_SPACING = (HOLE_SPACING * 23) / 7;
+const BUTTON_SIZE = BUTTON_SPACING - 3;
 
 // Each side of the board (top, right, bottom, left) has a range of holes.
 // For each side:
@@ -68,7 +69,7 @@ function renderBoard() {
   // Midpoint lines; uncomment to debug drawing alignment
   //parts.push(`<line x1="${BOARD_WIDTH / 2}" y1="0" x2="${BOARD_WIDTH / 2}" y2="${BOARD_HEIGHT}" stroke="rgba(0,0,0,0.25)" stroke-width="1"/>`);
   //parts.push(`<line x1="0" y1="${BOARD_HEIGHT / 2}" x2="${BOARD_WIDTH}" y2="${BOARD_HEIGHT / 2}" stroke="rgba(0,0,0,0.25)" stroke-width="1"/>`);
-
+  
   // Holes
   parts.push(`<g fill="#3A2A1A">`);
   for (let team = 0; team < state.teams.length; team++) {
@@ -97,22 +98,32 @@ function renderBoard() {
   }
 
   // Scoring Buttons
-  const innerBoardMargin = BOARD_MARGIN + TEAM_SPACING * state.teams.length;
-  let x = innerBoardMargin;
+  const rightP = holePosition(lastTeam + 1, 12);
+  const buttonsLeft = rightP.x - BUTTON_SPACING * 4;
+  let y = rightP.y;
+  parts.push(`<line x1="${rightP.x}" y1="0" x2="${rightP.x}" y2="${BOARD_HEIGHT}" stroke="rgba(0,0,0,0.25)" stroke-width="1"/>`);
 
-  for (let score = 1; score <= 5; score++) {
-    parts.push(`<g id="team-0-${score}" transform="translate(${x}, ${innerBoardMargin})" width="${BUTTON_SIZE}" height="${BUTTON_SIZE}" class="button">`)
-    parts.push(`<rect fill="var(--red-dark)" width="${BUTTON_SIZE}" height="${BUTTON_SIZE}" rx="3" />`);
-    parts.push(`<text x="${BUTTON_SIZE / 2}" y="${BUTTON_SIZE / 2}" font-size="${BUTTON_SIZE / 2}" text-anchor="middle" dominant-baseline="central" fill="var(--foreground)">+${score}</text>`);
-    parts.push(`</g>`);
 
-    x += BUTTON_SPACING;
+  let score = 1;
+  for (let row = 1; row <= 7; row++) {
+    let x = buttonsLeft;
+
+    for (let col = 1; col <= 4; col++) {
+      parts.push(`<g id="team-0-${score}" transform="translate(${x}, ${y})" width="${BUTTON_SIZE}" height="${BUTTON_SIZE}" class="button">`)
+      parts.push(`<rect fill="var(--red-dark)" width="${BUTTON_SIZE}" height="${BUTTON_SIZE}" rx="3" />`);
+      parts.push(`<text x="${BUTTON_SIZE / 2}" y="${BUTTON_SIZE / 2}" font-size="${BUTTON_SIZE / 2}" text-anchor="middle" dominant-baseline="central" fill="var(--foreground)">+${score}</text>`);
+      parts.push(`</g>`);
+
+      score += 1;
+      x += BUTTON_SPACING;
+    }
+    y += BUTTON_SPACING;
   }
 
   board.innerHTML = parts.join('');
 
   for (let team = 0; team < 1; team++) {
-    for (let score = 1; score <= 5; score++) {
+    for (let score = 1; score <= 28; score++) {
       let rect = document.getElementById(`team-${team}-${score}`).addEventListener("click", () => addToScore(team, score));
     }
   }
