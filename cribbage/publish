@@ -1,5 +1,5 @@
 #!/bin/bash
-DEST=../../publish/cribbage
+DEST=../publish/cribbage
 
 #./build
 
