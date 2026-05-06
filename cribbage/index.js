@@ -9,8 +9,9 @@ const PEG_RADIUS = 5;
 const HOLE_SPACING = 13;
 const TEAM_SPACING = 13;
 
-const BUTTON_SPACING = (HOLE_SPACING * 15) / 5;
-const BUTTON_SIZE = BUTTON_SPACING - 3;
+const BUTTON_SPACING = (HOLE_SPACING * 15) / 5; // 39px (5 buttons across in 15 hole-spaces)
+const BUTTON_SIZE = BUTTON_SPACING - 3;         // 36px
+const ACTION_BUTTON_SIZE = BUTTON_SIZE * 3;     // 108px
 
 // Each side of the board (top, right, bottom, left) has a range of holes.
 // For each side:
@@ -30,8 +31,7 @@ const POSSIBLE_SCORES = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 
 let state = {
   teams: [
     { index: 0, color: "--red", score: 0, last: 0 },
-    { index: 1, color: "--blue", score: 0, last: 0 },
-    { index: 2, color: "--white", score: 0, last: 0 }
+    { index: 1, color: "--blue", score: 0, last: 0 }
   ],
   undo: [],
   redo: []
@@ -119,17 +119,14 @@ function renderBoard() {
     addButtons(parts, centerP.x, centerP.y, 2, "var(--white-dark)", "var(--white)");
   }
 
-  // Action Buttons
-  const actionButtonWidth = BUTTON_SIZE * 3;
+  // Action Buttons (centered on each of the four 10-point segments along the bottom)
+  const actionsY = holePosition(3, 80 * 6/5).y - BUTTON_SIZE;
+  const ctrToLeft = -ACTION_BUTTON_SIZE / 2;
 
-  const undoP = holePosition(lastTeam + 1, 90 * 6/5);
-  addButton(parts, "undo", undoP.x - actionButtonWidth / 2, undoP.y - BUTTON_SIZE, actionButtonWidth, "Undo", "var(--button)");
-
-  const newGameP = holePosition(lastTeam + 1, 80 * 6/5);
-  addButton(parts, "new-game", newGameP.x - actionButtonWidth / 2, newGameP.y - BUTTON_SIZE, actionButtonWidth, "New Game", "var(--button)");
-
-  const redoP = holePosition(lastTeam + 1, 70 * 6/5);  
-  addButton(parts, "redo", redoP.x - actionButtonWidth / 2, redoP.y - BUTTON_SIZE, actionButtonWidth, "Redo", "var(--button)");
+  addButton(parts, "undo",   holePosition(0, 95 * 6/5).x + ctrToLeft, actionsY, ACTION_BUTTON_SIZE, "Undo", "var(--button)");
+  addButton(parts, "new-2p", holePosition(0, 85 * 6/5).x + ctrToLeft, actionsY, ACTION_BUTTON_SIZE, "New 2P", "var(--button)");
+  addButton(parts, "new-3p", holePosition(0, 75 * 6/5).x + ctrToLeft, actionsY, ACTION_BUTTON_SIZE, "New 3P", "var(--button)");
+  addButton(parts, "redo",   holePosition(0, 65 * 6/5).x + ctrToLeft, actionsY, ACTION_BUTTON_SIZE, "Redo", "var(--button)");
 
 
   // Load into SVG
@@ -143,7 +140,8 @@ function renderBoard() {
   }
 
   document.getElementById(`undo`).addEventListener("click", () => undo());
-  document.getElementById(`new-game`).addEventListener("click", () => resetGame());
+  document.getElementById(`new-2p`).addEventListener("click", () => resetGame(2));
+  document.getElementById(`new-3p`).addEventListener("click", () => resetGame(3));
   document.getElementById(`redo`).addEventListener("click", () => redo());
 }
 
@@ -282,22 +280,22 @@ function redo() {
   showScoreIncrease(toRedo.team, team.score);
 }
 
-function resetGame() {
-  state = {
-    teams: [
-      { index: 0, color: "--red", score: 0, last: 0 },
-      { index: 1, color: "--blue", score: 0, last: 0 },
-      { index: 2, color: "--white", score: 0, last: 0 }
-    ],
-    undo: [],
-    redo: []
-  };
+function resetGame(teams) {
+  const teamData = [
+    { index: 0, color: "--red", score: 0, last: 0 },
+    { index: 1, color: "--blue", score: 0, last: 0 }
+  ];
 
-  redrawPegs();
+  if (teams > 2) {
+    teamData.push({ index: 2, color: "--white", score: 0, last: 0 });
+  }
+
+  state = { teams: teamData, undo: [], redo: [] };
+  renderBoard();
 }
 
 function handleKeyDown(event) {
   if (event.key === "Backspace") {
-    resetGame();
+    resetGame(2);
   }
 }
