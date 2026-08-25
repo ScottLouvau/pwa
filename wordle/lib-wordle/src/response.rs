@@ -1,6 +1,7 @@
 use crate::word::Word;
 
 pub const ALL_GREEN: u16 = (2 << 8) + (2 << 6) + (2 << 4) + (2 << 2) + 2;
+pub static NONE: Response = Response::new(0);
 
 /// Represents one 'tile' of a Wordle response
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord)]
@@ -17,7 +18,7 @@ pub struct Response {
 }
 
 impl Response {
-    pub fn new(value: u16) -> Response {
+    pub const fn new(value: u16) -> Response {
         Response { value }
     }
 

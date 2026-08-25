@@ -1,4 +1,4 @@
-use crate::{word::Word, response::Response, rank, cluster_vector::ClusterVector};
+use crate::{cluster_vector::ClusterVector, rank, response::{self, Response}, word::Word};
 use num_format::{Locale, ToFormattedString};
 use std::{fs, path::Path, collections::HashMap, ops::Range};
 
@@ -293,6 +293,22 @@ pub fn score_guesses_by_responses(answers: &Vec<Word>, guesses: &Vec<Word>) -> V
         // Find count per cluster for this guess
         rank::counts(answers, *guess, &mut map);
         results.push((map.len(), *guess));
+    }
+
+    results.sort_by(|l, r| r.0.cmp(&l.0));
+    results
+}
+
+// Look for bad guesses.
+// This simply scores guess options by which reduce the answer count the least when no letters are found.
+pub fn worst_guesses(answers: &Vec<Word>, guesses: &Vec<Word>) -> Vec<(usize, Word)> {
+    let mut results = Vec::new();
+
+    let mut map = HashMap::new();
+    for guess in guesses.iter() {
+        // Find count per cluster for this guess
+        rank::counts(answers, *guess, &mut map);
+        results.push((*map.get(&response::NONE).unwrap_or(&0), *guess));
     }
 
     results.sort_by(|l, r| r.0.cmp(&l.0));

@@ -1,4 +1,4 @@
-use std::{time::Instant, env, path::Path, fs};
+use std::{env, fs, path::Path, println, time::Instant};
 use lib_wordle::{clubs::Clubs, letter_orders::LetterOrders, response::Response, scrappy, single_use::NeighborSide, word::Word, wordle_tree::{tree_player, WordleTree, WordleTreeToStringOptions}, *};
 
 /*
@@ -52,6 +52,7 @@ const USAGE: &str = "Usage: wordle_v2 <mode> [--set <wordSet>]? <args>...
  score_guesses   : Score each allowed guess by the number of clusters created (number of different tile responses)
  neighbors       : Show the most common neighbors for each letter (to help coming up with possible words when a particular letter is known)
  answer_stats    : Show letter frequency, first letter frequency, and repeated letter odds.
+ worst           : Sort guesses by worst first (largest cluster of remaining answers left).
  ";
 
 // perf            : Performance test the primary 'score' function (find tiles for a guess and answer pair)
@@ -379,6 +380,13 @@ fn main() {
             // One-Time Work
             single_use::merge_answers_into_guesses("data/2315");
             single_use::merge_answers_into_guesses("data/2309");
+        }
+
+        "worst" => {
+            let results = single_use::worst_guesses(&_answers, &_valid);
+            for (count, word) in results {
+                println!("{count} {word}");
+            }
         }
 
         _ => {
