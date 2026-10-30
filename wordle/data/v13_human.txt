@@ -49,6 +49,7 @@ c...t  >  harem
 .....  > soare
          S.A.E  >  dumpy
          s....  >  hokum
+         s...e  >  bused
          .O.re  >  mawky
                    ..... >  rover
          .O...  >  goody
@@ -61,6 +62,7 @@ c...t  >  harem
          ..a..  >  midgy
          ...rE  >  merge
          ...re  >  dumpy
+         ....e  >  embed
          .....  >  dumpy
 3+     >  * (guess)
 *      >  soare 
