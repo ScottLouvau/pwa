@@ -1,0 +1,124 @@
+<?xml version="1.0"?>
+<svg width="310" height="127" version="1.1" xmlns="http://www.w3.org/2000/svg">
+<!--
+  TODO:
+   - Replace `height="127"` above with `height="X"` where X = (5 + 61 * guess_count)
+   - Insert tiles for guesses:
+    <g class="gr r1">          (Replace '1' with guess number, 1-6)
+      <g class="gc c1">        (Replace '1' with character number in guess, 1-5)
+        <rect class="t b" />   (Replace 'b' with color ('b' = Black, 'y' = Yellow, 'g' = Green))
+        <text>C</text>         (Replace 'C' with uppercase letter from guess)        
+      </g>
+
+      ...                      (Repeat 'gc' block for each character in guess)
+    </g>
+
+    ...                        (Repeat 'gr' and contents for each guess)
+    </svg>
+-->
+<style>
+text {
+fill: white;
+font: bold 30px "Arial";
+text-anchor: middle;
+dominant-baseline: central;
+transform: translate(28px, 28px);
+}
+
+.t {
+width: 56px;
+height: 56px;
+stroke-width: 1px;
+}
+
+.g {
+fill: #538D4E;
+stroke: #538D4E;
+}
+
+.y {
+fill: #B59F3B;
+stroke: #B59F3B;
+}
+
+.b {
+fill: #3A3B3B;
+stroke: #3A3B3B;
+}
+
+.e {
+fill: #111112;
+stroke: #565758;
+}
+
+.r1 { --y: 5px; }
+.r2 { --y: 66px; }
+.r3 { --y: 127px; }
+.r4 { --y: 188px; }
+
+.c1 { --x: 5px; }
+.c2 { --x: 66px; }
+.c3 { --x: 127px; }
+.c4 { --x: 188px; }
+.c5 { --x: 249px; }
+
+g { transform: translate(var(--x), var(--y)); }
+</style>
+
+<rect x="0" y="0" width="310" height="371" fill="#111112" />
+
+<g class="gr r1">
+<g class="gc c1">
+    <rect class="t b" />
+    <text>C</text>
+</g>
+
+<g class="gc c2">
+    <rect class="t b" />
+    <text>L</text>
+</g>
+
+<g class="gc c3">
+    <rect class="t y" />
+    <text>I</text>
+</g>
+
+<g class="gc c4">
+    <rect class="t y" />
+    <text>N</text>
+</g>
+
+<g class="gc c5">
+    <rect class="t b" />
+    <text>T</text>
+</g>
+</g>
+
+<g class="gr r2">
+<g class="gc c1">
+    <rect class="t b" />
+    <text>S</text>
+</g>
+
+<g class="gc c2">
+    <rect class="t b" />
+    <text>O</text>
+</g>
+
+<g class="gc c3">
+    <rect class="t b" />
+    <text>A</text>
+</g>
+
+<g class="gc c4">
+    <rect class="t y" />
+    <text>R</text>
+</g>
+
+<g class="gc c5">
+    <rect class="t y" />
+    <text>E</text>
+</g>
+</g>
+
+</svg>
