@@ -227,8 +227,8 @@ fn main() {
             let guesses = args[1..].iter().map(|s| Word::new(s).unwrap()).collect::<Vec<Word>>();
             let tree = wordle_tree::builders::build(&strategy, &_answers, &guesses);
 
-            let mut options = WordleTreeToStringOptions::default();
-            options.show_average_turns  = options.show_average_turns;
+            let options = WordleTreeToStringOptions::default();
+            //options.show_average_turns = true;
 
             let mut output = String::new();
             tree.add_to_string(&options, 0, &mut output);

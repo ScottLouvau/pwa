@@ -222,7 +222,6 @@ impl TreePlayer<'_> {
 
 #[cfg(test)]
 mod tests {
-    use crate::wordle_tree::*;
     use super::*;
 
     const SAMPLE_TREE: &str = 

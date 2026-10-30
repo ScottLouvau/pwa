@@ -513,7 +513,6 @@ impl Ord for WordleTree {
 
 #[cfg(test)]
 mod tests {
-    use crate::*;
     use super::*;
 
     #[test]
