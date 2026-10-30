@@ -1,68 +1,69 @@
 clint
-CL...  >  pause
-cl...  >  leads
-c.i.t  >  hoped
-C.I..  >  soare
-C.i..  >  curio
-c.I..  >  pukey
-c.i..  >  miser
-c..n.  >  beach
-c...t  >  harem
-.l...  >  salle
-          .al..  >  royal
-          ..LL.  >  defog
-          ..l.e  >  bever
-.lin.  >  annoy
-.li.t  >  tilde
-.lI..  >  wager
-.li..  >  ailed
-          .IL..  >  fowls
-.L.N.  >  beaks
-.l.n.  >  morae
-.L..T  >  ables
-.L..t  >  soare
-.l..T  >  spade
-.l..t  >  taste
-..INT  >  tarps
-..INt  >  thing
-..inT  >  inept
-..IN.  >  greys (__ing, __ine)
-..in.  >  rides
-          .I...  >  korma
-..I.T  >  wersh
-..I.t  >  phare
-..i.T  >  armed
-          .....  >  gowfs
-..i.t  >  soare
-          .....  >  width
-..I..  >  drape
+CL...  >  pause  (clock)
+cl...  >  leads  (focal)
+c.i.t  >  hoped  (witch)
+C.I..  >  soare  (cried)
+C.i..  >  curio  (cigar)
+c.I..  >  pukey  (juice)
+c.i..  >  miser  (bicep)
+c..n.  >  beach  (munch)
+c...t  >  harem  (dutch)
+.l...  >  salle  (growl)
+          .al..  >  royal  (awful)
+          ..LL.  >  defog  (bully)
+          ..l.e  >  bever  (dowel)
+.lin.  >  annoy  -
+.li.t  >  tilde  -
+.lI..  >  wager  (skill)
+.li..  >  ailed  (broil)
+          .IL..  >  fowls  (hilly)
+.L.N.  >  beaks  (flunk)
+.l.n.  >  morae  (navel)
+.L..T  >  ables  (float)
+.L..t  >  soare  (elate)
+.l..T  >  spade  (vault)
+.l..t  >  taste  (motel)
+..INT  >  tarps  (faint)
+..INt  >  thing  -
+..inT  >  inept  -
+..IN.  >  greys  (swine)
+..in.  >  rides  (ninja)
+          .I...  >  korma  (ninja)
+..I.T  >  wersh  (moist)
+..I.t  >  phare  (suite)
+..i.T  >  armed  (befit)
+          .....  >  gowfs  (tight)
+..i.t  >  soare (birth)
+          .....  >  width  (bitty)
+..I..  >  drape  (whisk)
 ..i..  >  soare
-          ...re  >  rived
-          .....  >  fudgy
-...NT  >  shrug
-          ...u.  >  advew
-...Nt  >  tokay
-...N.  >  drape
-          d....  >  womb
+          ...re  >  rived  (fixer)
+          .....  >  fudgy  (hippy)
+...NT  >  shrug  (meant)
+          ...u.  >  advew  (taunt)
+...Nt  >  tokay  (stung)
+...N.  >  drape  (funny)
+          d....  >  wombs  (hound)
 ....t  >  soare
-          s.a.E  >  pshaw
+          s.a.E  >  pshaw  (baste)
 .....  > soare
-         S.A.E  >  dumpy
-         s....  >  hokum
-         s...e  >  bused
-         .O.re  >  mawky
+         S.A.E  >  dumpy  (shave)
+         s....  >  hokum  (fussy)
+         s...e  >  bused  (pesky; non-answer risk)
+         .O.re  >  mawky  (rover)
                    ..... >  rover
-         .O...  >  goody
-         .oar.  >  armor
-         .o.rE  >  paved
-         .o.r.  >  frump
-         ..ArE  >  gived
-         ..are  >  gybed
-                   ...E.  >  perms
-         ..a..  >  midgy
-         ...rE  >  merge
-         ...re  >  dumpy
-         ....e  >  embed
-         .....  >  dumpy
-3+     >  * (guess)
+         .O...  >  goody  (bobby)
+         .oar.  >  armor  (favor)
+         .o.rE  >  paved  (broke)
+         .o.r.  >  frump  (brood)
+         ..ArE  >  gived  (brake)
+         ..are  >  gybed  (wager)
+                   ...E.  >  perms  (waver)
+         ..a..  >  midgy  (mamma)
+         ...rE  >  merge  (purge)
+         ...re  >  dumpy  (defer)
+         ....e  >  embed  (geeky)
+         .....  >  dumpy  (buggy)
+3 1G+  >  * (guess)
+4+     >  * (guess)
 *      >  soare 
