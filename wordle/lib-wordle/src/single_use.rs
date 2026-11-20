@@ -328,7 +328,7 @@ pub fn expected(player: &mut TreePlayer, to_try: &Vec<Word>, answers: &Vec<Word>
     let mut constraint;
 
     for answer in to_try.iter() {
-        let _answer_string = answer.to_string();
+        //let _answer_string = answer.to_string();
 
         // Reset game state for this answer
         turn = 1;
@@ -339,7 +339,7 @@ pub fn expected(player: &mut TreePlayer, to_try: &Vec<Word>, answers: &Vec<Word>
 
         // Follow the strategy until random guessing is specified
         while let Some(guess) = player.choose(&guesses, turn, &answers_left) {
-            let _guess_string = guess.to_string();
+            //let _guess_string = guess.to_string();
 
             // If we guess the answer, the game will always take exactly this many turns
             if guess == *answer {

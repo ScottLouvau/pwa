@@ -249,6 +249,7 @@ fn main() {
             let tree = WordleTree::parse(strategy_text.lines()).unwrap();
             let mut player = tree_player::TreePlayer::new(&tree);
 
+            // Pass &_valid as last argument to test random guessing of any valid word (vs only valid answers)
             let result = single_use::expected(&mut player, &_answers, &_answers);
             let mut game_sum = 0f64;
             let mut turn_sum = 0f64;
