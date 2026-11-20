@@ -250,9 +250,16 @@ fn main() {
             let mut player = tree_player::TreePlayer::new(&tree);
 
             let result = single_use::expected(&mut player, &_answers, &_answers);
+            let mut game_sum = 0f64;
+            let mut turn_sum = 0f64;
+
             for index in 0..result.len() {
                 println!("{}: {:.2}", index, result[index]);
+                game_sum += result[index];
+                turn_sum += result[index] * (index as f64);
             }
+
+            println!("{:.1} turns / {:.0} games = {:.3} avg", turn_sum, game_sum, (turn_sum / game_sum));
         }
 
         "stats" => {

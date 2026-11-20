@@ -128,7 +128,7 @@ pub fn expected(player: &mut TreePlayer, to_try: &Vec<Word>, answers: &Vec<Word>
             // Filter remaining answers to those with the same response as the guess
             let response = Response::score(guess, *answer);
             constraint.add(guess, response);
-            answers_left.retain(|a| constraint.matches(*a) && Response::score(guess, *answer) == response);
+            answers_left.retain(|a| constraint.matches(*a) && Response::score(guess, *a) == response);
 
             if answers_left.len() == 1 { break; }
         }
@@ -141,10 +141,7 @@ pub fn expected(player: &mut TreePlayer, to_try: &Vec<Word>, answers: &Vec<Word>
 
 // Recurse to determine expected turns for the random end of a given game
 fn expected_random_recurse(turn: usize, answer: Word, answers_left: &Vec<Word>, mut path_probability: f64, game_count_by_turn_count: &mut [f64; 8]) {
-    if answers_left.len() == 0 {
-        // No answers means we already guessed exactly the answer.
-        game_count_by_turn_count[turn] += path_probability;
-    } else if turn >= LOSS_TURNS {
+    if turn >= LOSS_TURNS {
         game_count_by_turn_count[LOSS_TURNS] += path_probability;
     } else {
         // The probability of each path is equal for each remaining answer
@@ -160,7 +157,7 @@ fn expected_random_recurse(turn: usize, answer: Word, answers_left: &Vec<Word>, 
                 inner_answers_left.clear();
                 let response = Response::score(*guess, answer);
                 for other_answer in answers_left.iter() {
-                    if Response::score(*guess, *other_answer) == response {
+                    if other_answer != guess && Response::score(*guess, *other_answer) == response {
                         inner_answers_left.push(*other_answer);
                     }
                 }
@@ -401,7 +398,8 @@ pub fn worst_guesses(answers: &Vec<Word>, guesses: &Vec<Word>) -> Vec<(usize, Wo
 
 #[cfg(test)]
 mod tests {
-    use crate::{single_use::expected_random_recurse, wordle_tree::tree_player::TreePlayer, *};
+    use crate::w;
+    use super::*;
     //use std::{fs, path::Path};
 
     // Useful Test, but unreliable.
@@ -493,7 +491,7 @@ mod tests {
         let tree = crate::wordle_tree::WordleTree::parse(strategy_text.lines()).unwrap();
         let mut player = crate::wordle_tree::tree_player::TreePlayer::new(&tree);
 
-        let result = super::expected(&mut player, &vec![w("fixer")], &answers);
+        let result = expected(&mut player, &vec![w("fixer")], &answers);
         assert_eq!(result[4], 2f64 / 6f64); // FIXER first
         assert_eq!(result[5], 3f64 / 6f64); // FIBER > FIXER (1/3 x 1) or PIPER > FIXER (1/3 x 1/2)
         assert_eq!(result[6], 1f64 / 6f64); // PIPER > FIBER > FIXER (1/3 x 1/2)
