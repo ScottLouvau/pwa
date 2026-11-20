@@ -1,4 +1,4 @@
-use crate::{cluster_vector::ClusterVector, rank, response::{self, Response}, word::Word};
+use crate::{cluster_vector::ClusterVector, rank, response::{self, Constraint, Response}, word::Word, wordle_tree::tree_player::TreePlayer};
 use num_format::{Locale, ToFormattedString};
 use std::{fs, path::Path, collections::HashMap, ops::Range};
 
@@ -85,6 +85,90 @@ pub fn letter_neighbors(answers: &Vec<Word>, position_range: Range<usize>) -> [L
     results.sort_by(|l, r| r.count.cmp(&l.count));
 
     results
+}
+
+const LOSS_TURNS: usize = 7;
+
+// Compute the expected chart (number of games for each number of turns) for a given strategy across all answers
+pub fn expected(player: &mut TreePlayer, to_try: &Vec<Word>, answers: &Vec<Word>) -> [f64; 8] {    
+    let mut game_count_by_turn_count: [f64; 8] = [0f64; 8];
+
+    let mut turn;
+    let mut guesses = Vec::new();
+    let mut answers_left = Vec::with_capacity(answers.len());
+    let mut constraint;
+
+    for answer in to_try.iter() {
+        let _answer_string = answer.to_string();
+
+        // Reset game state for this answer
+        turn = 1;
+        guesses.clear();
+        answers_left.clear();
+        answers_left.extend(answers);
+        constraint = Constraint::new();
+
+        // Follow the strategy until random guessing is specified
+        while let Some(guess) = player.choose(&guesses, turn, &answers_left) {
+            let _guess_string = guess.to_string();
+
+            // If we guess the answer, the game will always take exactly this many turns
+            if guess == *answer {
+                game_count_by_turn_count[turn] += 1f64;
+
+                // Clear all answers to indicate the game is done 
+                //  (distinct from the answer is the only remaining possible answer, where we'll use one more turn)
+                answers_left.clear();
+                break;
+            }
+
+            turn += 1;
+            guesses.push(guess);
+
+            // Filter remaining answers to those with the same response as the guess
+            let response = Response::score(guess, *answer);
+            constraint.add(guess, response);
+            answers_left.retain(|a| constraint.matches(*a) && Response::score(guess, *answer) == response);
+
+            if answers_left.len() == 1 { break; }
+        }
+
+        expected_random_recurse(turn, *answer, &mut answers_left, 1f64, &mut game_count_by_turn_count);
+    }
+
+    game_count_by_turn_count
+}
+
+// Recurse to determine expected turns for the random end of a given game
+fn expected_random_recurse(turn: usize, answer: Word, answers_left: &Vec<Word>, mut path_probability: f64, game_count_by_turn_count: &mut [f64; 8]) {
+    if answers_left.len() == 0 {
+        // No answers means we already guessed exactly the answer.
+        game_count_by_turn_count[turn] += path_probability;
+    } else if turn >= LOSS_TURNS {
+        game_count_by_turn_count[LOSS_TURNS] += path_probability;
+    } else {
+        // The probability of each path is equal for each remaining answer
+        path_probability /= answers_left.len() as f64;
+        let mut inner_answers_left = Vec::with_capacity(answers_left.len());        
+
+        for guess in answers_left.iter() {
+            if *guess == answer {
+                // If we guessed the answer, this is the remaining turn count
+                game_count_by_turn_count[turn] += path_probability;
+            } else {
+                // Otherwise, find remaining possible answers and recurse with random guessing
+                inner_answers_left.clear();
+                let response = Response::score(*guess, answer);
+                for other_answer in answers_left.iter() {
+                    if Response::score(*guess, *other_answer) == response {
+                        inner_answers_left.push(*other_answer);
+                    }
+                }
+
+                expected_random_recurse(turn + 1, answer, &inner_answers_left, path_probability, game_count_by_turn_count);
+            }
+        }
+    }
 }
 
 #[derive(Copy, Clone, PartialEq, Eq)]
@@ -317,7 +401,7 @@ pub fn worst_guesses(answers: &Vec<Word>, guesses: &Vec<Word>) -> Vec<(usize, Wo
 
 #[cfg(test)]
 mod tests {
-    use crate::*;
+    use crate::{single_use::expected_random_recurse, wordle_tree::tree_player::TreePlayer, *};
     //use std::{fs, path::Path};
 
     // Useful Test, but unreliable.
@@ -393,5 +477,25 @@ mod tests {
         assert_eq!(true, super::is_consonant(b'F' - b'A'));
         assert_eq!(true, super::is_consonant(b'N' - b'A'));
         assert_eq!(true, super::is_consonant(b'V' - b'A'));
+    }
+
+    #[test]
+    fn test_expected() {
+        let answers = vec![w("fiber"), w("fixer"), w("piper")];
+        let mut game_count_by_turn_count = [0f64; 8];
+        // CLINT ..i.. SOARE ...re RIVED rI.E.
+        expected_random_recurse(4, w("fixer"), &answers, 1f64, &mut game_count_by_turn_count);
+        assert_eq!(game_count_by_turn_count[4], 2f64 / 6f64); // FIXER first
+        assert_eq!(game_count_by_turn_count[5], 3f64 / 6f64); // FIBER > FIXER (1/3 x 1) or PIPER > FIXER (1/3 x 1/2)
+        assert_eq!(game_count_by_turn_count[6], 1f64 / 6f64); // PIPER > FIBER > FIXER (1/3 x 1/2)
+
+        let strategy_text = std::fs::read_to_string(&"../data/v13.txt").unwrap();
+        let tree = crate::wordle_tree::WordleTree::parse(strategy_text.lines()).unwrap();
+        let mut player = crate::wordle_tree::tree_player::TreePlayer::new(&tree);
+
+        let result = super::expected(&mut player, &vec![w("fixer")], &answers);
+        assert_eq!(result[4], 2f64 / 6f64); // FIXER first
+        assert_eq!(result[5], 3f64 / 6f64); // FIBER > FIXER (1/3 x 1) or PIPER > FIXER (1/3 x 1/2)
+        assert_eq!(result[6], 1f64 / 6f64); // PIPER > FIBER > FIXER (1/3 x 1/2)
     }
 }

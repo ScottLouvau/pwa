@@ -39,7 +39,7 @@
                 }
             },
             "_args": ["simulate", "2", "../data/v13.txt", "--total"],
-            "args": ["assess", "../data/v13.txt", "clint", "soare", "dough", "dodgy"],
+            "args": ["expected", "../data/v13.txt"],
             "cwd": "${workspaceFolder}/bin-wordle"
         },
         {

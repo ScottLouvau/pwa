@@ -40,6 +40,8 @@ const USAGE: &str = "Usage: wordle_v2 <mode> [--set <wordSet>]? <args>...
  simulate <game_count> <strategyPath> [--games <answers_file_path> | --answer <single_answer> | --cluster <target_word> <at_turn>]? [--total]
   Simulate games using a strategy tree file. Can run for a specific answer or cluster only to check average turns for specific games.
 
+ expected <strategyPath> : Compute expected 'game count by turn count' bar chart for strategy
+
  orders          : For a set of letter+position, show possible orders. (Uppercase green, lowercase yellow)
  best            : For a strategy tree and in-cluster word, show best choices after the strategy.
  best_all        : For a set of standard guesses, show the how the best option for each cluster compares to the last guess.
@@ -239,6 +241,18 @@ fn main() {
             let guesses_and_responses = read_guesses_and_responses(args);
             let guesses_and_responses = analyze::parse_into_guesses_and_responses(guesses_and_responses);
             analyze::analyze(&_answers, &_valid, guesses_and_responses);
+        }
+
+        "expected" => {
+            let strategy_path = args[0];
+            let strategy_text = fs::read_to_string(&strategy_path).unwrap();
+            let tree = WordleTree::parse(strategy_text.lines()).unwrap();
+            let mut player = tree_player::TreePlayer::new(&tree);
+
+            let result = single_use::expected(&mut player, &_answers, &_answers);
+            for index in 0..result.len() {
+                println!("{}: {:.2}", index, result[index]);
+            }
         }
 
         "stats" => {
